@@ -1,7 +1,7 @@
 from django.db import models
-import re 
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+
 
 class User(AbstractUser):
 
@@ -20,7 +20,9 @@ class User(AbstractUser):
         ('rejected', 'Rejected'),
     ]
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(
+        max_length=100
+    )
 
     email = models.EmailField(
         unique=True
@@ -51,55 +53,8 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['name', 'phone']
 
-    def clean(self):
-        errors = {}
-
-        # USERNAME
-        username = self.username.strip() if self.username else ""
-        if not username:
-            errors['username'] = "Username required"
-        elif not re.match(r'^[A-Za-z ]+$', username):
-            errors['username'] = "Only alphabets allowed"
-        elif len(username) < 4:
-            errors['username'] = "Min 4 characters required"
-
-        # EMAIL
-        if not self.email.lower().endswith("@gmail.com"):
-            errors['email'] = "Only Gmail allowed"
-        else:
-            if User.objects.filter(email=self.email).exclude(id=self.id).exists():
-                errors['email'] = "User already exists — Go Login"
-    
-        # PASSWORD
-        pwd = self.password
-        if len(pwd) < 8 or len(pwd) > 15:
-            errors['password'] = "Password 8–15 characters"
-
-        if not re.search(r'[A-Z]', pwd):
-            errors['password'] = "At least 1 capital letter"
-
-        if not re.search(r'[a-z]', pwd):
-            errors['password'] = "At least 1 small letter"
-
-        if not re.search(r'[0-9]', pwd):
-            errors['password'] = "At least 1 number"
-
-        if not re.search(r'[@#$%^&*]', pwd):
-            errors['password'] = "At least 1 special character"
-
-        # CONTACT
-        if not re.match(r'^[6-9]\d{9}$', self.contact):
-            errors['contact'] = "Invalid mobile number"
-
-        if errors:
-            raise ValidationError(errors)
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
     def __str__(self):
-        return self.username
+        return self.email
 
 
 class Property(models.Model):
@@ -123,9 +78,9 @@ class Property(models.Model):
         decimal_places=2
     )
 
-    bedrooms = models.IntegerField()
+    bedrooms = models.PositiveIntegerField()
 
-    bathrooms = models.IntegerField()
+    bathrooms = models.PositiveIntegerField()
 
     description = models.TextField()
 
@@ -133,16 +88,24 @@ class Property(models.Model):
         auto_now_add=True
     )
 
+    def clean(self):
+
+        if (
+            self.owner.role != 'host'
+            or
+            self.owner.host_status != 'approved'
+        ):
+            raise ValidationError({
+                'owner':
+                'Only approved hosts can add properties.'
+            })
+
     def save(self, *args, **kwargs):
-
-        if self.owner.role != 'host' or self.owner.host_status != 'approved':
-            raise ValueError(
-                "Only approved hosts can add properties."
-            )
-
+        self.full_clean()
         super().save(*args, **kwargs)
 
-# Multiple Images Model
+
+
 class PropertyImage(models.Model):
 
     property = models.ForeignKey(
@@ -155,22 +118,25 @@ class PropertyImage(models.Model):
         upload_to='property_images/'
     )
 
+    IMAGE_TYPE_CHOICES = [
+        ('hall', 'Hall'),
+        ('bedroom', 'Bedroom'),
+        ('bathroom', 'Bathroom'),
+        ('washroom', 'Washroom'),
+        ('kitchen', 'Kitchen'),
+        ('exterior', 'Exterior'),
+    ]
+
     image_type = models.CharField(
         max_length=50,
-        choices=[
-            ('hall', 'Hall'),
-            ('bedroom', 'Bedroom'),
-            ('bathroom', 'Bathroom'),
-            ('washroom', 'Washroom'),
-            ('kitchen', 'Kitchen'),
-            ('exterior', 'Exterior')
-        ]
+        choices=IMAGE_TYPE_CHOICES
     )
 
     uploaded_at = models.DateTimeField(
         auto_now_add=True
-    )        
-    
+    )
+
+
 
 class Booking(models.Model):
 
@@ -211,19 +177,27 @@ class Booking(models.Model):
         auto_now_add=True
     )
 
-    def save(self, *args, **kwargs):
+    def clean(self):
+
+        errors = {}
 
         if self.user.role == 'host':
-            raise ValidationError(
+            errors['user'] = (
                 "Hosts cannot create bookings."
             )
 
         if self.check_out <= self.check_in:
-            raise ValidationError(
-                "Check-out date must be after check-in date."
+            errors['check_out'] = (
+                "Check-out must be after check-in."
             )
 
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
+
 
 
 class Review(models.Model):
@@ -240,7 +214,7 @@ class Review(models.Model):
         related_name='reviews'
     )
 
-    rating = models.IntegerField()
+    rating = models.PositiveSmallIntegerField()
 
     comment = models.TextField()
 
@@ -248,16 +222,23 @@ class Review(models.Model):
         auto_now_add=True
     )
 
-    def save(self, *args, **kwargs):
+    def clean(self):
 
-        if self.rating < 1 or self.rating > 5:
-            raise ValidationError(
+        errors = {}
+
+        if not (1 <= self.rating <= 5):
+            errors['rating'] = (
                 "Rating must be between 1 and 5."
             )
 
         if self.user == self.property.owner:
-            raise ValidationError(
+            errors['user'] = (
                 "You cannot review your own property."
             )
 
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
