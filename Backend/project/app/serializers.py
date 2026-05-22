@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 from .models import User,Property,PropertyImage,Booking,Review
 import re
 from datetime import date
@@ -30,6 +31,13 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+        read_only_fields = [
+            'id',
+            'role',
+            'host_status',
+            'created_at'
+        ]
 
     def validate_name(self, value):
 
@@ -65,9 +73,38 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_password(self, value):
 
-        if len(value) < 8:
+        if not value:
             raise serializers.ValidationError(
-                "Password must be at least 8 characters."
+                "Password cannot be empty."
+            )
+
+        if len(value) < 8 or len(value) > 15:
+            raise serializers.ValidationError(
+                "Password must be between 8 and 15 characters."
+            )
+
+        # At least one lowercase letter
+        if not re.search(r'[a-z]', value):
+            raise serializers.ValidationError(
+                "Password must contain at least one lowercase letter."
+            )
+
+        # At least one uppercase letter
+        if not re.search(r'[A-Z]', value):
+            raise serializers.ValidationError(
+                "Password must contain at least one uppercase letter."
+            )
+
+        # At least one number
+        if not re.search(r'[0-9]', value):
+            raise serializers.ValidationError(
+                "Password must contain at least one numeric value."
+            )
+
+        # At least one special character
+        if not re.search(r'[*/+\-!@#$%&^]', value):
+            raise serializers.ValidationError(
+                "Password must contain at least one special character."
             )
 
         return value
@@ -88,11 +125,10 @@ class UserSerializer(serializers.ModelSerializer):
 
         password = validated_data.pop('password')
 
-        user = User(**validated_data)
-
-        user.set_password(password)
-
-        user.save()
+        user = User.objects.create_user(
+            password=password,
+            **validated_data
+        )
 
         return user
     
@@ -292,8 +328,6 @@ class BookingSerializer(serializers.ModelSerializer):
 
         return data    
     
-from rest_framework import serializers
-from .models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
