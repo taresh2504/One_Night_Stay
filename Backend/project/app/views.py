@@ -30,5 +30,8 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    
+# API Authentication testing pending 
+
 
  
