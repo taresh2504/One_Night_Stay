@@ -42,3 +42,6 @@ print(api)
 
 api2 = 'going to use access and refresh token for postman jwt testing'
 print(api2)
+
+api3 = 'going to add and test two api jwt tokens for authentication'
+print(api3)
