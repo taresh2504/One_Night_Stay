@@ -37,8 +37,6 @@
 # comment
 # created_at
 
-api3 = 'going to add and test two api jwt tokens for authentication'
-print(api3)
 
 api4 = 'from tomorrow onwards i m gonna start comleting my internship project'
 print(api4)
