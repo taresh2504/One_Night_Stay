@@ -37,5 +37,6 @@
 # comment
 # created_at
 
-api5 = 'tested api token for getting access and refresh token'
-print(api5)
+
+api6 = 'tested api token for getting access and refresh token and performed one patch operation in one of the database'
+print(api6)
