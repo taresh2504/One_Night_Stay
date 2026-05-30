@@ -152,7 +152,8 @@ class PropertySerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             'id',
-            'created_at'
+            'created_at',
+            'owner'
         ]
 
     # TITLE VALIDATION
@@ -171,6 +172,16 @@ class PropertySerializer(serializers.ModelSerializer):
         if len(value.strip()) < 3:
             raise serializers.ValidationError(
                 "Location is too short."
+            )
+
+        return value
+    
+    # Description validation 
+    def validate_description(self, value):
+
+        if len(value.strip()) < 20:
+            raise serializers.ValidationError(
+                "Description must be at least 20 characters."
             )
 
         return value
@@ -194,10 +205,10 @@ class PropertySerializer(serializers.ModelSerializer):
                 'Bedrooms must be at least 1.'
             })
 
-        if data.get('bathrooms', 0) <= 0:
+        if data.get('bathrooms', 0) < 0:
             raise serializers.ValidationError({
                 'bathrooms':
-                'Bathrooms must be at least 1.'
+                'Bathrooms cannot be negative.'
             })
 
         return data
@@ -364,7 +375,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         if len(value.strip()) < 5:
             raise serializers.ValidationError(
-                "Comment must contain at least 5 characters."
+                "Feedback must contain at least 5 characters."
             )
 
         return value

@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import User
-from .serializers import UserSerializer
+from .models import *
+from .serializers import UserSerializer,PropertySerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -11,7 +11,6 @@ class UserRegisterView(generics.CreateAPIView):
 
     serializer_class = UserSerializer
     
-
 
 # Get All Users API
 class UserListView(generics.ListAPIView):
@@ -30,8 +29,22 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    
-# API Authentication testing pending 
+# Property begin 
 
+# LIST + CREATE PROPERTY
+class PropertyListCreateView(generics.ListCreateAPIView):
 
- 
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+
+        serializer.save(owner=self.request.user) 
+
+# RETRIEVE + UPDATE + DELETE PROPERTY
+class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]        

@@ -200,15 +200,18 @@ class Booking(models.Model):
         decimal_places=2
     )
 
+
     booking_status = models.CharField(
         max_length=20,
         choices=BOOKING_STATUS_CHOICES,
         default='pending'
     )
 
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+    
 
     def clean(self):
 
