@@ -39,3 +39,6 @@
 
 api6 = 'tested api token for getting access and refresh token and performed one patch operation in one of the database'
 print(api6)
+
+api7 = 'tested api token for getting access and refresh token and performed one patch operation in one of the database called propert and also validation complete'
+print(api7)

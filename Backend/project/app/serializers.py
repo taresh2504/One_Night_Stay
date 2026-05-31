@@ -132,7 +132,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
-    
+# Property Validations begin  
 class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
