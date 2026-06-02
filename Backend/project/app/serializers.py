@@ -399,7 +399,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             errors['user'] = (
                 "You cannot review your own property."
             )
-
+            
         if errors:
             raise serializers.ValidationError(
                 errors

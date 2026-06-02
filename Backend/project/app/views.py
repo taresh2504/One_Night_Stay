@@ -1,30 +1,39 @@
 from rest_framework import generics
 from .models import *
 from .serializers import UserSerializer,PropertySerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
 class BecomeHostView(APIView):
 
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-    def post(self,request):
+    def post(self, request):
 
-        user=request.user
+        user = request.user
 
-        if user.role=='host':
+        if user.host_status == 'pending':
             return Response(
                 {
                     'message':
-                    'Host request already submitted.'
+                    'Host request already pending.'
                 },
                 status=400
             )
 
-        user.role='host'
-        user.host_status='pending'
+        if user.host_status == 'approved':
+            return Response(
+                {
+                    'message':
+                    'You are already an approved host.'
+                },
+                status=400
+            )
+
+        user.role = 'host'
+        user.host_status = 'pending'
 
         user.save()
 
@@ -70,6 +79,13 @@ class PropertyListCreateView(generics.ListCreateAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
 
+    def get_permissions(self):
+
+        if self.request.method == 'GET':
+            return [AllowAny()]
+
+        return [IsAuthenticated()]
+
     def perform_create(self, serializer):
 
         user = self.request.user
@@ -91,4 +107,6 @@ class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
-    permission_classes = [IsAuthenticated]        
+    permission_classes = [IsAuthenticated]       
+    
+       
