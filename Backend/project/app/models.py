@@ -170,7 +170,6 @@ class PropertyImage(models.Model):
     )
 
 
-
 class Booking(models.Model):
 
     BOOKING_STATUS_CHOICES = [

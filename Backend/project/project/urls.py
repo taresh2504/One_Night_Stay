@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from app.views import UserRegisterView,UserListView,UserDetailView,PropertyListCreateView,PropertyDetailView,BecomeHostView
+from app.views import UserRegisterView,UserListView,UserDetailView,PropertyListCreateView,PropertyDetailView,BecomeHostView,PropertyImageListCreateView
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +31,11 @@ urlpatterns = [
     path('api/token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
     path('properties/',PropertyListCreateView.as_view(),name='property-list-create'),
     path('properties/<int:pk>/', PropertyDetailView.as_view(),name='property-detail'),
+    path('property-images/',PropertyImageListCreateView.as_view(),name='property-image-list-create'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

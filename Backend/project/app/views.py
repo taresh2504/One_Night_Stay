@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import *
-from .serializers import UserSerializer,PropertySerializer
+from .serializers import UserSerializer,PropertySerializer,PropertyImageSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -109,4 +109,35 @@ class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]       
     
-       
+class PropertyImageListCreateView(
+    generics.ListCreateAPIView
+):
+
+    queryset = PropertyImage.objects.all()
+    serializer_class = PropertyImageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+
+        user = self.request.user
+
+        property_obj = serializer.validated_data['property']
+
+        # Only approved hosts can upload images
+        if user.role != 'host':
+            raise PermissionDenied(
+                "Only hosts can upload property images."
+            )
+
+        if user.host_status != 'approved':
+            raise PermissionDenied(
+                "Admin approval required."
+            )
+
+        # Only property owner can upload images
+        if property_obj.owner != user:
+            raise PermissionDenied(
+                "You can upload images only to your own property."
+            )
+
+        serializer.save()       
