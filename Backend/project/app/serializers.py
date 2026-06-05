@@ -147,6 +147,10 @@ class PropertySerializer(serializers.ModelSerializer):
             'bedrooms',
             'bathrooms',
             'description',
+            'property_type',
+            'max_guests',
+            'beds',
+            'is_featured',
             'created_at'
         ]
 
@@ -187,31 +191,31 @@ class PropertySerializer(serializers.ModelSerializer):
         return value
 
     # PRICE VALIDATION
-    def validate_price(self, value):
+    # def validate_price(self, value):
 
-        if value <= 0:
-            raise serializers.ValidationError(
-                "Price must be greater than 0."
-            )
+    #     if value <= 0:
+    #         raise serializers.ValidationError(
+    #             "Price must be greater than 0."
+    #         )
 
-        return value
+    #     return value
 
     # OBJECT LEVEL VALIDATION
-    def validate(self, data):
+    # def validate(self, data):
 
-        if data.get('bedrooms', 0) <= 0:
-            raise serializers.ValidationError({
-                'bedrooms':
-                'Bedrooms must be at least 1.'
-            })
+    #     if data.get('bedrooms', 0) <= 0:
+    #         raise serializers.ValidationError({
+    #             'bedrooms':
+    #             'Bedrooms must be at least 1.'
+    #         })
 
-        if data.get('bathrooms', 0) < 0:
-            raise serializers.ValidationError({
-                'bathrooms':
-                'Bathrooms cannot be negative.'
-            })
+    #     if data.get('bathrooms', 0) < 0:
+    #         raise serializers.ValidationError({
+    #             'bathrooms':
+    #             'Bathrooms cannot be negative.'
+    #         })
 
-        return data
+    #     return data
     
 
 class PropertyImageSerializer(serializers.ModelSerializer):
@@ -315,10 +319,10 @@ class BookingSerializer(serializers.ModelSerializer):
         check_out = data.get('check_out')
 
         # Host booking restriction
-        if user and user.role == 'host':
+        if self.user == self.property.owner:
             errors['user'] = (
-                "Hosts cannot create bookings."
-            )
+        "You cannot book your own property."
+        )
 
         # Date validation
         if (
@@ -339,7 +343,6 @@ class BookingSerializer(serializers.ModelSerializer):
 
         return data    
     
-
 
 class ReviewSerializer(serializers.ModelSerializer):
 

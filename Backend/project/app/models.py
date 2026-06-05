@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
+from cloudinary.models import CloudinaryField
 
 class UserManager(BaseUserManager):
 
@@ -117,26 +118,71 @@ class Property(models.Model):
 
     description = models.TextField()
 
+    PROPERTY_TYPE_CHOICES = [
+        ('room', 'Room'),
+        ('flat', 'Flat'),
+        ('hotel', 'Hotel'),
+        ('resort', 'Resort'),
+        ('bungalow', 'Bungalow'),
+    ]
+
+    property_type = models.CharField(
+    max_length=20,
+    choices=PROPERTY_TYPE_CHOICES
+    )
+
+    max_guests = models.PositiveIntegerField()
+
+    beds = models.PositiveIntegerField()
+
+    is_featured = models.BooleanField(
+        default=False
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
     def clean(self):
 
+        errors = {}
+
         if (
             self.owner.role != 'host'
             or
             self.owner.host_status != 'approved'
         ):
-            raise ValidationError({
-                'owner':
+            errors['owner'] = (
                 'Only approved hosts can add properties.'
-            })
+            )
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
+        if self.price <= 0:
+            errors['price'] = (
+                'Price must be greater than zero.'
+            )
 
+        if self.bedrooms <= 0:
+            errors['bedrooms'] = (
+                'Bedrooms must be greater than zero.'
+            )
+
+        if self.bathrooms <= 0:
+            errors['bathrooms'] = (
+                'Bathrooms must be greater than zero.'
+            )
+
+        if self.beds <= 0:
+            errors['beds'] = (
+                'Beds must be greater than zero.'
+            )
+
+        if self.max_guests <= 0:
+            errors['max_guests'] = (
+                'Max guests must be greater than zero.'
+            )
+
+        if errors:
+            raise ValidationError(errors)
 
 
 class PropertyImage(models.Model):
@@ -147,8 +193,12 @@ class PropertyImage(models.Model):
         related_name='images'
     )
 
-    image = models.ImageField(
-        upload_to='property_images/'
+    # image = models.ImageField(
+    #     upload_to='property_images/'
+    # )
+
+    image = CloudinaryField(
+    'image'
     )
 
     IMAGE_TYPE_CHOICES = [
@@ -199,32 +249,69 @@ class Booking(models.Model):
         decimal_places=2
     )
 
-
     booking_status = models.CharField(
         max_length=20,
         choices=BOOKING_STATUS_CHOICES,
         default='pending'
     )
 
+    guests_count = models.PositiveIntegerField()
+
+    tax_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True
     )
     
-
     def clean(self):
 
         errors = {}
 
-        if self.user.role == 'host':
+        if self.user == self.property.owner:
             errors['user'] = (
-                "Hosts cannot create bookings."
+                "You cannot book your own property."
+            )
+
+        if self.total_price <= 0:
+            errors['total_price'] = (
+                "Total price must be greater than zero."
+            )    
+
+        if self.tax_amount < 0:
+            errors['tax_amount'] = (
+                "Tax cannot be negative."
             )
 
         if self.check_out <= self.check_in:
             errors['check_out'] = (
                 "Check-out must be after check-in."
             )
+
+        existing_booking = Booking.objects.filter(
+        property=self.property,
+        booking_status='confirmed',
+        check_in__lt=self.check_out,
+        check_out__gt=self.check_in
+    ).exclude(pk=self.pk)
+
+        if existing_booking.exists():
+            errors['property'] = (
+                "Property already booked for selected dates."
+            )
+
+        if self.guests_count <= 0:
+            errors['guests_count'] = (
+                "Guests must be at least 1."
+            )    
+
+        if self.guests_count > self.property.max_guests:
+            errors['guests_count'] = (
+                "Guest limit exceeded."
+            )    
 
         if errors:
             raise ValidationError(errors)
@@ -277,3 +364,101 @@ class Review(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+class SubscriptionPlan(models.Model):
+
+    name = models.CharField(
+        max_length=50
+    )
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    booking_limit = models.PositiveIntegerField()
+
+    property_limit = models.PositiveIntegerField()
+
+    priority = models.PositiveIntegerField()
+
+    description = models.TextField()
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+class UserSubscription(models.Model):
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    plan = models.ForeignKey(
+        SubscriptionPlan,
+        on_delete=models.CASCADE
+    )
+
+    start_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    end_date = models.DateTimeField()
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+class Payment(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    booking = models.OneToOneField(
+        Booking,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    razorpay_order_id = models.CharField(
+        max_length=255
+    )
+
+    razorpay_payment_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    razorpay_signature = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    payment_status = models.CharField(
+        max_length=20,
+        default='pending'
+    )
+
+    paid_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )                
