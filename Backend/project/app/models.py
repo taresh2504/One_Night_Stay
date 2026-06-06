@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
+from django.utils import timezone
 
 class UserManager(BaseUserManager):
 
@@ -183,6 +184,10 @@ class Property(models.Model):
 
         if errors:
             raise ValidationError(errors)
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class PropertyImage(models.Model):
@@ -353,9 +358,35 @@ class Review(models.Model):
                 "Rating must be between 1 and 5."
             )
 
+        if len(self.comment.strip()) < 5:
+            errors['comment'] = (
+                "Comment must be at least 5 characters."
+            )
+
         if self.user == self.property.owner:
             errors['user'] = (
                 "You cannot review your own property."
+            )
+
+        booking_exists = Booking.objects.filter(
+            user=self.user,
+            property=self.property,
+            booking_status='confirmed'
+        ).exists()
+
+        if not booking_exists:
+            errors['user'] = (
+                "You can review only booked properties."
+            )
+
+        review_exists = Review.objects.filter(
+            user=self.user,
+            property=self.property
+        ).exclude(pk=self.pk)
+
+        if review_exists.exists():
+            errors['user'] = (
+                "You have already reviewed this property."
             )
 
         if errors:
@@ -365,10 +396,13 @@ class Review(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+
+
 class SubscriptionPlan(models.Model):
 
     name = models.CharField(
-        max_length=50
+        max_length=50,
+        unique=True
     )
 
     price = models.DecimalField(
@@ -392,11 +426,50 @@ class SubscriptionPlan(models.Model):
         auto_now_add=True
     )
 
+    def clean(self):
+
+        errors = {}
+
+        if self.price <= 0:
+            errors['price'] = (
+                "Price must be greater than zero."
+            )
+
+        if self.booking_limit <= 0:
+            errors['booking_limit'] = (
+                "Booking limit must be greater than zero."
+            )
+
+        if self.property_limit < 0:
+            errors['property_limit'] = (
+                "Property limit cannot be negative."
+            )
+
+        if self.priority <= 0:
+            errors['priority'] = (
+                "Priority must be greater than zero."
+            )
+
+        if len(self.description.strip()) < 10:
+            errors['description'] = (
+                "Description is too short."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+
 class UserSubscription(models.Model):
 
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='subscription'
     )
 
     plan = models.ForeignKey(
@@ -414,16 +487,40 @@ class UserSubscription(models.Model):
         default=True
     )
 
+    def clean(self):
+
+        errors = {}
+
+        if self.end_date <= timezone.now():
+            errors['end_date'] = (
+                "End date must be after start date."
+            )
+
+        if self.plan and not self.plan.is_active:
+            errors['plan'] = (
+                "Selected plan is inactive."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)    
+
+
 class Payment(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='payments'
     )
 
     booking = models.OneToOneField(
         Booking,
         on_delete=models.CASCADE,
+        related_name='payment',
         null=True,
         blank=True
     )
@@ -449,11 +546,19 @@ class Payment(models.Model):
         decimal_places=2
     )
 
+    PAYMENT_STATUS_CHOICES = [
+    ('pending', 'Pending'),
+    ('success', 'Success'),
+    ('failed', 'Failed'),
+]
+
     payment_status = models.CharField(
         max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
         default='pending'
     )
 
+   
     paid_at = models.DateTimeField(
         null=True,
         blank=True
@@ -461,4 +566,51 @@ class Payment(models.Model):
 
     created_at = models.DateTimeField(
         auto_now_add=True
-    )                
+    )
+
+    def clean(self):
+
+        errors = {}
+
+        if self.amount <= 0:
+
+            errors['amount'] = (
+                "Amount must be greater than zero."
+            )
+
+        if (
+            self.payment_status == 'success'
+            and
+            not self.razorpay_payment_id
+        ):
+
+            errors['razorpay_payment_id'] = (
+                "Payment ID is required for successful payments."
+            )
+
+        if (
+            self.payment_status == 'success'
+            and
+            not self.razorpay_signature
+        ):
+
+            errors['razorpay_signature'] = (
+                "Signature is required for successful payments."
+            )
+
+        if (
+            self.payment_status == 'success'
+            and
+            not self.paid_at
+        ):
+
+            errors['paid_at'] = (
+                "Paid date is required."
+            )
+
+        if errors:
+            raise ValidationError(errors)   
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)                 

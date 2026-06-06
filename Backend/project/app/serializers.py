@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import User,Property,PropertyImage,Booking,Review
+from .models import *
 import re
 from datetime import date
 
@@ -239,6 +239,11 @@ class PropertyImageSerializer(serializers.ModelSerializer):
     # IMAGE VALIDATION
     def validate_image(self, value):
 
+        if not value:
+            raise serializers.ValidationError(
+                "Image is required."
+            )
+
         # Allowed formats
         allowed_extensions = [
             '.jpg',
@@ -264,9 +269,15 @@ class PropertyImageSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Image size must not exceed 2 MB."
             )
+        
+        if not value:
+            raise serializers.ValidationError(
+                "Image is required."
+            )
 
         return value    
     
+
 
 class BookingSerializer(serializers.ModelSerializer):
 
@@ -280,6 +291,8 @@ class BookingSerializer(serializers.ModelSerializer):
             'check_in',
             'check_out',
             'total_price',
+            'guests_count',
+            'tax_amount',
             'booking_status',
             'created_at'
         ]
@@ -289,7 +302,6 @@ class BookingSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
-    # CHECK-IN VALIDATION
     def validate_check_in(self, value):
 
         if value < date.today():
@@ -299,47 +311,37 @@ class BookingSerializer(serializers.ModelSerializer):
 
         return value
 
-    # TOTAL PRICE VALIDATION
-    def validate_total_price(self, value):
-
-        if value <= 0:
-            raise serializers.ValidationError(
-                "Total price must be greater than 0."
-            )
-
-        return value
-
-    # OBJECT LEVEL VALIDATION
     def validate(self, data):
 
         errors = {}
 
         user = data.get('user')
+        property_obj = data.get('property')
         check_in = data.get('check_in')
         check_out = data.get('check_out')
 
-        # Host booking restriction
-        if self.user == self.property.owner:
+        # User cannot book own property
+        if (
+            user
+            and property_obj
+            and user == property_obj.owner
+        ):
             errors['user'] = (
-        "You cannot book your own property."
-        )
+                "You cannot book your own property."
+            )
 
-        # Date validation
+        # Check-out must be after check-in
         if (
             check_in
-            and
-            check_out
-            and
-            check_out <= check_in
+            and check_out
+            and check_out <= check_in
         ):
             errors['check_out'] = (
                 "Check-out must be after check-in."
             )
 
         if errors:
-            raise serializers.ValidationError(
-                errors
-            )
+            raise serializers.ValidationError(errors)
 
         return data    
     
@@ -363,17 +365,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
-    # RATING VALIDATION
-    def validate_rating(self, value):
-
-        if not (1 <= value <= 5):
-            raise serializers.ValidationError(
-                "Rating must be between 1 and 5."
-            )
-
-        return value
-
-    # COMMENT VALIDATION
     def validate_comment(self, value):
 
         if len(value.strip()) < 5:
@@ -382,30 +373,165 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
 
         return value
+    
 
-    # OBJECT LEVEL VALIDATION
-    def validate(self, data):
+    
+class SubscriptionPlanSerializer(
+    serializers.ModelSerializer
+):
 
-        errors = {}
+    class Meta:
+        model = SubscriptionPlan
 
-        user = data.get('user')
-        property_obj = data.get('property')
+        fields = [
+            'id',
+            'name',
+            'price',
+            'booking_limit',
+            'property_limit',
+            'priority',
+            'description',
+            'is_active',
+            'created_at'
+        ]
 
-        # Own property review restriction
-        if (
-            user
-            and
-            property_obj
-            and
-            user == property_obj.owner
-        ):
-            errors['user'] = (
-                "You cannot review your own property."
-            )
-            
-        if errors:
+        read_only_fields = [
+            'id',
+            'created_at'
+        ]
+
+    def validate_name(self, value):
+
+        if len(value.strip()) < 3:
             raise serializers.ValidationError(
-                errors
+                "Plan name is too short."
             )
 
-        return data    
+        return value
+
+    def validate_description(self, value):
+
+        if len(value.strip()) < 10:
+            raise serializers.ValidationError(
+                "Description must contain at least 10 characters."
+            )
+
+        return value
+    
+
+
+class UserSubscriptionSerializer(
+    serializers.ModelSerializer
+):
+
+    class Meta:
+
+        model = UserSubscription
+
+        fields = [
+            'id',
+            'user',
+            'plan',
+            'start_date',
+            'end_date',
+            'is_active'
+        ]
+
+        read_only_fields = [
+            'id',
+            'start_date'
+        ]
+
+    def validate_end_date(self, value):
+
+        if value <= timezone.now():
+            raise serializers.ValidationError(
+                "End date must be in the future."
+            )
+
+        return value
+        
+
+# class PaymentSerializer(
+#     serializers.ModelSerializer
+# ):
+
+#     class Meta:
+
+#         model = Payment
+
+#         fields = [
+#             'id',
+#             'user',
+#             'booking',
+#             'razorpay_order_id',
+#             'razorpay_payment_id',
+#             'razorpay_signature',
+#             'amount',
+#             'payment_status',
+#             'paid_at',
+#             'created_at'
+#         ]
+
+#         read_only_fields = [
+#             'id',
+#             'created_at'
+#         ]
+
+#     def validate_amount(self, value):
+
+#         if value <= 0:
+
+#             raise serializers.ValidationError(
+#                 "Amount must be greater than zero."
+#             )
+
+#         return value      
+
+#     def validate(self, data):
+
+#         status = data.get('payment_status')
+
+#         if status == 'success':
+
+#             if not data.get('razorpay_payment_id'):
+
+#                 raise serializers.ValidationError({
+#                     'razorpay_payment_id':
+#                     'Required for successful payment.'
+#                 })
+
+#             if not data.get('razorpay_signature'):
+
+#                 raise serializers.ValidationError({
+#                     'razorpay_signature':
+#                     'Required for successful payment.'
+#                 })
+
+#         return data  
+
+class PaymentSerializer(
+    serializers.ModelSerializer
+):
+
+    class Meta:
+
+        model = Payment
+
+        fields = [
+            'id',
+            'user',
+            'booking',
+            'razorpay_order_id',
+            'razorpay_payment_id',
+            'razorpay_signature',
+            'amount',
+            'payment_status',
+            'paid_at',
+            'created_at'
+        ]
+
+        read_only_fields = [
+            'id',
+            'created_at'
+        ]
