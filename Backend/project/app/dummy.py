@@ -38,3 +38,6 @@
 # created_at
 
 Project_update = "Today, I implemented subscription plans, added property category support, and integrated Cloudinary for cloud media management. I also refactored existing models to align with the new features and improve the project's scalability and structure."
+
+update_2='Till now, I have mainly worked on backend development using Django REST Framework. I created and updated models, serializers, views, and URL routes. I implemented JWT authentication and successfully generated access and refresh tokens for secure API access. I tested APIs using Postman, including CRUD operations and protected endpoints. Additionally, I worked on property-related modules, validations, and image upload functionality. Currently, I am enhancing the project further with features such as subscriptions, property categories, and Cloudinary integration'
+

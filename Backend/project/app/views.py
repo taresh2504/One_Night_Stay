@@ -48,25 +48,20 @@ class BecomeHostView(APIView):
 
 # Register User API
 class UserRegisterView(generics.CreateAPIView):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
 
 # Get All Users API
 class UserListView(generics.ListAPIView):
-
     queryset = User.objects.all()
-
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
 
 # Single User API
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
-
     queryset = User.objects.all()
-
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -74,7 +69,6 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 # LIST + CREATE PROPERTY
 class PropertyListCreateView(generics.ListCreateAPIView):
-
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
@@ -109,9 +103,8 @@ class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]       
     
-class PropertyImageListCreateView(
-    generics.ListCreateAPIView
-):
+
+class PropertyImageListCreateView(generics.ListCreateAPIView):
 
     queryset = PropertyImage.objects.all()
     serializer_class = PropertyImageSerializer
