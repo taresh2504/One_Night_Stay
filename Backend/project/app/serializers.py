@@ -83,25 +83,25 @@ class UserSerializer(serializers.ModelSerializer):
                 "Password must be between 8 and 15 characters."
             )
 
-        # At least one lowercase letter
+        
         if not re.search(r'[a-z]', value):
             raise serializers.ValidationError(
                 "Password must contain at least one lowercase letter."
             )
 
-        # At least one uppercase letter
+        
         if not re.search(r'[A-Z]', value):
             raise serializers.ValidationError(
                 "Password must contain at least one uppercase letter."
             )
 
-        # At least one number
+        
         if not re.search(r'[0-9]', value):
             raise serializers.ValidationError(
                 "Password must contain at least one numeric value."
             )
 
-        # At least one special character
+        
         if not re.search(r'[*/+\-!@#$%&^]', value):
             raise serializers.ValidationError(
                 "Password must contain at least one special character."
@@ -132,7 +132,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
-# Property Validations begin  
+ 
 class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -160,7 +160,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'owner'
         ]
 
-    # TITLE VALIDATION
+    
     def validate_title(self, value):
 
         if len(value.strip()) < 5:
@@ -170,7 +170,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
         return value
 
-    # LOCATION VALIDATION
+    
     def validate_location(self, value):
 
         if len(value.strip()) < 3:
@@ -180,7 +180,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
         return value
     
-    # Description validation 
+    
     def validate_description(self, value):
 
         if len(value.strip()) < 20:
@@ -236,7 +236,7 @@ class PropertyImageSerializer(serializers.ModelSerializer):
             'uploaded_at'
         ]
 
-    # IMAGE VALIDATION
+    
     def validate_image(self, value):
 
         if not value:
@@ -244,7 +244,7 @@ class PropertyImageSerializer(serializers.ModelSerializer):
                 "Image is required."
             )
 
-        # Allowed formats
+        
         allowed_extensions = [
             '.jpg',
             '.jpeg',
@@ -262,7 +262,7 @@ class PropertyImageSerializer(serializers.ModelSerializer):
                 "Only JPG, JPEG, PNG, WEBP files allowed."
             )
 
-        # Max size = 2 MB
+        
         max_size = 2 * 1024 * 1024
 
         if value.size > max_size:
@@ -320,7 +320,7 @@ class BookingSerializer(serializers.ModelSerializer):
         check_in = data.get('check_in')
         check_out = data.get('check_out')
 
-        # User cannot book own property
+        
         if (
             user
             and property_obj
@@ -330,7 +330,7 @@ class BookingSerializer(serializers.ModelSerializer):
                 "You cannot book your own property."
             )
 
-        # Check-out must be after check-in
+        
         if (
             check_in
             and check_out

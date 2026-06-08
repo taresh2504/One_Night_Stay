@@ -46,28 +46,27 @@ class BecomeHostView(APIView):
         )
 
 
-# Register User API
 class UserRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
 
-# Get All Users API
+
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
 
-# Single User API
+
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-# Property begin 
 
-# LIST + CREATE PROPERTY
+
+
 class PropertyListCreateView(generics.ListCreateAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
@@ -96,7 +95,7 @@ class PropertyListCreateView(generics.ListCreateAPIView):
 
         serializer.save(owner=user) 
 
-# RETRIEVE + UPDATE + DELETE PROPERTY
+
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Property.objects.all()
@@ -116,7 +115,7 @@ class PropertyImageListCreateView(generics.ListCreateAPIView):
 
         property_obj = serializer.validated_data['property']
 
-        # Only approved hosts can upload images
+        
         if user.role != 'host':
             raise PermissionDenied(
                 "Only hosts can upload property images."
@@ -127,7 +126,7 @@ class PropertyImageListCreateView(generics.ListCreateAPIView):
                 "Admin approval required."
             )
 
-        # Only property owner can upload images
+        
         if property_obj.owner != user:
             raise PermissionDenied(
                 "You can upload images only to your own property."

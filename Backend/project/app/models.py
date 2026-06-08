@@ -53,34 +53,17 @@ class User(AbstractUser):
         ('rejected', 'Rejected'),
     ]
 
-    name = models.CharField(
-        max_length=100
-    )
+    name = models.CharField(max_length=100)
 
-    email = models.EmailField(
-        unique=True
-    )
+    email = models.EmailField(unique=True)
 
-    phone = models.CharField(
-        max_length=10,
-        unique=True
-    )
+    phone = models.CharField(max_length=10,unique=True)
 
-    role = models.CharField(
-        max_length=20,
-        choices=ROLE_CHOICES,
-        default='user'
-    )
+    role = models.CharField(max_length=20,choices=ROLE_CHOICES,default='user')
 
-    host_status = models.CharField(
-        max_length=20,
-        choices=HOST_STATUS_CHOICES,
-        default='none'
-    )
+    host_status = models.CharField(max_length=20,choices=HOST_STATUS_CHOICES,default='none')
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
 
@@ -94,24 +77,13 @@ class User(AbstractUser):
 
 class Property(models.Model):
 
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='properties'
-    )
+    owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name='properties')
 
-    title = models.CharField(
-        max_length=255
-    )
+    title = models.CharField(max_length=255)
 
-    location = models.CharField(
-        max_length=255
-    )
+    location = models.CharField(max_length=255)
 
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    price = models.DecimalField(max_digits=10,decimal_places=2)
 
     bedrooms = models.PositiveIntegerField()
 
@@ -127,22 +99,15 @@ class Property(models.Model):
         ('bungalow', 'Bungalow'),
     ]
 
-    property_type = models.CharField(
-    max_length=20,
-    choices=PROPERTY_TYPE_CHOICES
-    )
+    property_type = models.CharField(max_length=20,choices=PROPERTY_TYPE_CHOICES)
 
     max_guests = models.PositiveIntegerField()
 
     beds = models.PositiveIntegerField()
 
-    is_featured = models.BooleanField(
-        default=False
-    )
+    is_featured = models.BooleanField(default=False)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
 
@@ -190,6 +155,7 @@ class Property(models.Model):
         super().save(*args, **kwargs)
 
 
+
 class PropertyImage(models.Model):
 
     property = models.ForeignKey(
@@ -215,14 +181,9 @@ class PropertyImage(models.Model):
         ('exterior', 'Exterior'),
     ]
 
-    image_type = models.CharField(
-        max_length=50,
-        choices=IMAGE_TYPE_CHOICES
-    )
+    image_type = models.CharField(max_length=50,choices=IMAGE_TYPE_CHOICES)
 
-    uploaded_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 class Booking(models.Model):
@@ -233,44 +194,23 @@ class Booking(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='bookings')
 
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
+    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='bookings')
 
     check_in = models.DateField()
 
     check_out = models.DateField()
 
-    total_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    total_price = models.DecimalField(max_digits=10,decimal_places=2)
 
-    booking_status = models.CharField(
-        max_length=20,
-        choices=BOOKING_STATUS_CHOICES,
-        default='pending'
-    )
+    booking_status = models.CharField(max_length=20,choices=BOOKING_STATUS_CHOICES,default='pending')
 
     guests_count = models.PositiveIntegerField()
 
-    tax_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0
-    )
+    tax_amount = models.DecimalField(max_digits=10,decimal_places=2,default=0)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def clean(self):
 
@@ -329,25 +269,15 @@ class Booking(models.Model):
 
 class Review(models.Model):
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='reviews')
 
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
+    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='reviews')
 
     rating = models.PositiveSmallIntegerField()
 
     comment = models.TextField()
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
 
@@ -396,19 +326,18 @@ class Review(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+# subscription = UserSubscription.objects.get(
+#     user=request.user
+# )
 
+# subscription.plan = premium_plan
+# subscription.save()
 
 class SubscriptionPlan(models.Model):
 
-    name = models.CharField(
-        max_length=50,
-        unique=True
-    )
+    name = models.CharField(max_length=50,unique=True)
 
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    price = models.DecimalField(max_digits=10,decimal_places=2)
 
     booking_limit = models.PositiveIntegerField()
 
@@ -418,13 +347,9 @@ class SubscriptionPlan(models.Model):
 
     description = models.TextField()
 
-    is_active = models.BooleanField(
-        default=True
-    )
+    is_active = models.BooleanField(default=True)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
 
@@ -463,29 +388,17 @@ class SubscriptionPlan(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class UserSubscription(models.Model):
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscription'
-    )
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='subscription')
 
-    plan = models.ForeignKey(
-        SubscriptionPlan,
-        on_delete=models.CASCADE
-    )
+    plan = models.ForeignKey(SubscriptionPlan,on_delete=models.CASCADE)
 
-    start_date = models.DateTimeField(
-        auto_now_add=True
-    )
+    start_date = models.DateTimeField(auto_now_add=True)
 
     end_date = models.DateTimeField()
 
-    is_active = models.BooleanField(
-        default=True
-    )
+    is_active = models.BooleanField(default=True)
 
     def clean(self):
 
@@ -511,40 +424,17 @@ class UserSubscription(models.Model):
 
 class Payment(models.Model):
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='payments'
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='payments')
 
-    booking = models.OneToOneField(
-        Booking,
-        on_delete=models.CASCADE,
-        related_name='payment',
-        null=True,
-        blank=True
-    )
+    booking = models.OneToOneField(Booking,on_delete=models.CASCADE,related_name='payment',null=True,blank=True)
 
-    razorpay_order_id = models.CharField(
-        max_length=255
-    )
+    razorpay_order_id = models.CharField(max_length=255)
 
-    razorpay_payment_id = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True
-    )
+    razorpay_payment_id = models.CharField(max_length=255,blank=True,null=True)
 
-    razorpay_signature = models.CharField(
-        max_length=500,
-        blank=True,
-        null=True
-    )
+    razorpay_signature = models.CharField(max_length=500,blank=True,null=True)
 
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
+    amount = models.DecimalField(max_digits=10,decimal_places=2)
 
     PAYMENT_STATUS_CHOICES = [
     ('pending', 'Pending'),
@@ -552,21 +442,12 @@ class Payment(models.Model):
     ('failed', 'Failed'),
 ]
 
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS_CHOICES,
-        default='pending'
-    )
+    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS_CHOICES,default='pending')
 
    
-    paid_at = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    paid_at = models.DateTimeField(null=True,blank=True)
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
 
