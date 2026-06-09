@@ -3,6 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from .models import *
 import re
 from datetime import date
+from django.utils import timezone
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,7 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_name(self, value):
 
-        if len(value) < 4:
+        if len(value.strip()) < 4:
             raise serializers.ValidationError(
                 "Minimum 4 characters required."
             )
@@ -270,10 +271,6 @@ class PropertyImageSerializer(serializers.ModelSerializer):
                 "Image size must not exceed 2 MB."
             )
         
-        if not value:
-            raise serializers.ValidationError(
-                "Image is required."
-            )
 
         return value    
     
@@ -299,7 +296,8 @@ class BookingSerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             'id',
-            'created_at'
+            'created_at',
+            'user'
         ]
 
     def validate_check_in(self, value):
@@ -315,12 +313,13 @@ class BookingSerializer(serializers.ModelSerializer):
 
         errors = {}
 
-        user = data.get('user')
+        request = self.context.get('request')
+        user = request.user if request else None
+
         property_obj = data.get('property')
         check_in = data.get('check_in')
         check_out = data.get('check_out')
 
-        
         if (
             user
             and property_obj
@@ -330,7 +329,6 @@ class BookingSerializer(serializers.ModelSerializer):
                 "You cannot book your own property."
             )
 
-        
         if (
             check_in
             and check_out
@@ -343,7 +341,7 @@ class BookingSerializer(serializers.ModelSerializer):
         if errors:
             raise serializers.ValidationError(errors)
 
-        return data    
+        return data  
     
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -362,7 +360,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             'id',
-            'created_at'
+            'created_at',
+            'user'
         ]
 
     def validate_comment(self, value):
@@ -439,7 +438,8 @@ class UserSubscriptionSerializer(
 
         read_only_fields = [
             'id',
-            'start_date'
+            'start_date',
+            'user'
         ]
 
     def validate_end_date(self, value):
@@ -533,5 +533,39 @@ class PaymentSerializer(
 
         read_only_fields = [
             'id',
+            'created_at',
+            'user'
+        ]
+
+class WishlistSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Wishlist
+
+        fields = [
+            'id',
+            'user',
+            'property',
             'created_at'
         ]
+
+        read_only_fields = [
+            'id',
+            'created_at',
+            'user'
+        ]
+
+    def validate(self, data):
+
+        user = self.context['request'].user
+
+        property_obj = data.get('property')
+
+        if user == property_obj.owner:
+            raise serializers.ValidationError({
+                'user':
+                'You cannot add your own property to wishlist.'
+            })
+
+        return data      

@@ -154,6 +154,9 @@ class Property(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.title    
+
 
 
 class PropertyImage(models.Model):
@@ -184,6 +187,9 @@ class PropertyImage(models.Model):
     image_type = models.CharField(max_length=50,choices=IMAGE_TYPE_CHOICES)
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.property.title} - {self.image_type}"
 
 
 class Booking(models.Model):
@@ -265,6 +271,8 @@ class Booking(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.user.email} - {self.property.title}"    
 
 
 class Review(models.Model):
@@ -325,6 +333,9 @@ class Review(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.rating}"    
 
 # subscription = UserSubscription.objects.get(
 #     user=request.user
@@ -387,6 +398,9 @@ class SubscriptionPlan(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name    
+
 
 class UserSubscription(models.Model):
 
@@ -419,7 +433,11 @@ class UserSubscription(models.Model):
         
     def save(self, *args, **kwargs):
         self.full_clean()
-        super().save(*args, **kwargs)    
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.plan.name}"  
+      
 
 
 class Payment(models.Model):
@@ -428,7 +446,7 @@ class Payment(models.Model):
 
     booking = models.OneToOneField(Booking,on_delete=models.CASCADE,related_name='payment',null=True,blank=True)
 
-    razorpay_order_id = models.CharField(max_length=255)
+    razorpay_order_id = models.CharField(max_length=255,unique=True)
 
     razorpay_payment_id = models.CharField(max_length=255,blank=True,null=True)
 
@@ -494,4 +512,57 @@ class Payment(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super().save(*args, **kwargs)                 
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.razorpay_order_id                     
+
+class Wishlist(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='wishlists'
+    )
+
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='wishlists'
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        unique_together = (
+            'user',
+            'property'
+        )
+
+    def clean(self):
+
+        errors = {}
+
+        if self.user == self.property.owner:
+
+            errors['user'] = (
+                "You cannot add your own property to wishlist."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+
+        return (
+            f"{self.user.email} - {self.property.title}"
+        )        
