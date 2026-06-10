@@ -158,7 +158,6 @@ class Property(models.Model):
         return self.title    
 
 
-
 class PropertyImage(models.Model):
 
     property = models.ForeignKey(
@@ -167,12 +166,9 @@ class PropertyImage(models.Model):
         related_name='images'
     )
 
-    # image = models.ImageField(
-    #     upload_to='property_images/'
-    # )
-
     image = CloudinaryField(
-    'image'
+        'property_image',
+        folder='internship_media/property_images'
     )
 
     IMAGE_TYPE_CHOICES = [
@@ -184,9 +180,14 @@ class PropertyImage(models.Model):
         ('exterior', 'Exterior'),
     ]
 
-    image_type = models.CharField(max_length=50,choices=IMAGE_TYPE_CHOICES)
+    image_type = models.CharField(
+        max_length=50,
+        choices=IMAGE_TYPE_CHOICES
+    )
 
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return f"{self.property.title} - {self.image_type}"
@@ -517,23 +518,14 @@ class Payment(models.Model):
     def __str__(self):
         return self.razorpay_order_id                     
 
+
 class Wishlist(models.Model):
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='wishlists'
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='wishlists')
 
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name='wishlists'
-    )
+    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='wishlists')
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
 

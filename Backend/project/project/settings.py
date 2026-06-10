@@ -37,9 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'app',
     'rest_framework',
 ]
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME':'dnjvp8b90',
+    'API_KEY':'868796568785493',
+    'API_SECRET':'Kjw2gsLiSMFmos_rtPL7KB9lMEE'
+}
+
 
 AUTH_USER_MODEL = 'app.User'
 
@@ -76,13 +85,24 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'One_Night_Stay',
+#         'USER': 'root',
+#         'PASSWORD':'Tandy@123',
+#         'PORT':3306
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'One_Night_Stay',
-        'USER': 'root',
-        'PASSWORD':'Tandy@123',
-        'PORT':3306
+        'USER': 'postgres',
+        'PASSWORD': 'Tandy@123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -121,10 +141,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+# STATIC_URL = 'static/'
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_URL = '/dynamic_media/'  # or any prefix you choose
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 REST_FRAMEWORK = {
 
