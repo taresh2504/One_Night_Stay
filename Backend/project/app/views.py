@@ -51,20 +51,16 @@ class UserRegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     
 
-
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
 
-
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-
-
 
 
 class PropertyListCreateView(generics.ListCreateAPIView):

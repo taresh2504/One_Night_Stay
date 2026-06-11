@@ -67,7 +67,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         if not re.match(r'^[6-9]\d{9}$', value):
             raise serializers.ValidationError(
-                "Invalid mobile number."
+                "Invalid mobile number please enter number in digits."
             )
 
         return value
@@ -115,7 +115,7 @@ class UserSerializer(serializers.ModelSerializer):
         if data.get('password') != data.get('cpassword'):
             raise serializers.ValidationError({
                 'cpassword':
-                'Passwords do not match.'
+                'Password and Confirm Password do not match.'
             })
 
         return data

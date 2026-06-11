@@ -85,15 +85,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'One_Night_Stay',
-#         'USER': 'root',
-#         'PASSWORD':'Tandy@123',
-#         'PORT':3306
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -141,15 +132,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-# STATIC_URL = 'static/'
-
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
 
 STATIC_URL = 'static/'
 
-# MEDIA_URL = '/dynamic_media/'  # or any prefix you choose
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 REST_FRAMEWORK = {
 
@@ -159,3 +144,4 @@ REST_FRAMEWORK = {
 
     ]
 }
+
