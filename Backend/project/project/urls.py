@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path,include
-from app.views import UserRegisterView,UserListView,UserDetailView,PropertyListCreateView,PropertyDetailView,BecomeHostView,PropertyImageListCreateView
+from app.views import *
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,6 +28,7 @@ urlpatterns = [
     path('register/',UserRegisterView.as_view(),name='register'),
     path('users/',UserListView.as_view(),name='users'),
     path('users/<int:pk>/',UserDetailView.as_view(),name='user-detail'),
+    path('subscription-plans/',SubscriptionPlanListView.as_view(),name='subscription-plans'),
     path('api/token/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
     path('api/token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
     path('properties/',PropertyListCreateView.as_view(),name='property-list-create'),

@@ -1,6 +1,6 @@
 from rest_framework import generics
 from .models import *
-from .serializers import UserSerializer,PropertySerializer,PropertyImageSerializer
+from .serializers import *
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -61,6 +61,10 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+class SubscriptionPlanListView(generics.ListCreateAPIView):
+    queryset = SubscriptionPlan.objects.all()
+    serializer_class = SubscriptionPlanSerializer    
 
 
 class PropertyListCreateView(generics.ListCreateAPIView):
