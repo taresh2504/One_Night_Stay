@@ -28,12 +28,15 @@ urlpatterns = [
     path('register/',UserRegisterView.as_view(),name='register'),
     path('users/',UserListView.as_view(),name='users'),
     path('users/<int:pk>/',UserDetailView.as_view(),name='user-detail'),
+    path('login/',LoginView.as_view(),name='login'),
     path('subscription-plans/',SubscriptionPlanListView.as_view(),name='subscription-plans'),
+    path('subscription-plans/<int:pk>/',SubscriptionPlanDetailView.as_view(),name='subscription-plan-detail'),
     path('api/token/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
     path('api/token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
     path('properties/',PropertyListCreateView.as_view(),name='property-list-create'),
     path('properties/<int:pk>/', PropertyDetailView.as_view(),name='property-detail'),
     path('property-images/',PropertyImageListCreateView.as_view(),name='property-image-list-create'),
+    path('subscribe/',UserSubscriptionCreateView.as_view(),name='subscribe'),
 ]
 
 # if settings.DEBUG:

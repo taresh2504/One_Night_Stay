@@ -1,10 +1,14 @@
-from rest_framework import generics
+from rest_framework import generics,status
+from django.contrib.auth import authenticate
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import timedelta
+
 
 class BecomeHostView(APIView):
 
@@ -60,11 +64,73 @@ class UserListView(generics.ListAPIView):
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] 
 
-class SubscriptionPlanListView(generics.ListCreateAPIView):
-    queryset = SubscriptionPlan.objects.all()
-    serializer_class = SubscriptionPlanSerializer    
+
+class LoginView(APIView):
+
+    def post(self, request):
+
+        serializer = LoginSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        try:
+
+            user = User.objects.get(
+                email=email
+            )
+
+        except User.DoesNotExist:
+
+            return Response(
+                {
+                    "message":
+                    "Account not found. Please register first."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        user = authenticate(
+            request,
+            email=email,
+            password=password
+        )
+
+        if not user:
+
+            return Response(
+                {
+                    "message":
+                    "Incorrect password."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        refresh = RefreshToken.for_user(
+            user
+        )
+
+        return Response(
+            {
+                "message":
+                "Login successful.",
+
+                "refresh":
+                str(refresh),
+
+                "access":
+                str(refresh.access_token)
+            },
+            status=status.HTTP_200_OK
+        )    
 
 
 class PropertyListCreateView(generics.ListCreateAPIView):
@@ -132,4 +198,26 @@ class PropertyImageListCreateView(generics.ListCreateAPIView):
                 "You can upload images only to your own property."
             )
 
-        serializer.save()       
+        serializer.save()     
+
+class SubscriptionPlanListView(generics.ListCreateAPIView):
+    queryset = SubscriptionPlan.objects.all()
+    serializer_class = SubscriptionPlanSerializer   
+
+class SubscriptionPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubscriptionPlan.objects.all()
+    serializer_class = SubscriptionPlanSerializer              
+
+
+class UserSubscriptionCreateView(generics.CreateAPIView):
+
+    serializer_class = UserSubscriptionSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+
+        serializer.save(
+        user=self.request.user,
+        end_date=timezone.now() + timedelta(days=30)
+    )

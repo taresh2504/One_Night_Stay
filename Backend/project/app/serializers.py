@@ -132,7 +132,10 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
         return user
-    
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()    
  
 class PropertySerializer(serializers.ModelSerializer):
 
@@ -439,7 +442,8 @@ class UserSubscriptionSerializer(
         read_only_fields = [
             'id',
             'start_date',
-            'user'
+            'user',
+            'end_date'
         ]
 
     def validate_end_date(self, value):
