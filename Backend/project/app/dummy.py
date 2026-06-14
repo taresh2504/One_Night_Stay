@@ -41,3 +41,6 @@ Project_update = "Today, I implemented subscription plans, added property catego
 
 update_2='Till now, I have mainly worked on backend development using Django REST Framework. I created and updated models, serializers, views, and URL routes. I implemented JWT authentication and successfully generated access and refresh tokens for secure API access. I tested APIs using Postman, including CRUD operations and protected endpoints. Additionally, I worked on property-related modules, validations, and image upload functionality. Currently, I am enhancing the project further with features such as subscriptions, property categories, and Cloudinary integration'
 
+update_3 = 'just a small update regarding project that the backend is going to complete in few days'
+
+print(update_3)
