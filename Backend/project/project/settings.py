@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import cloudinary
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,11 +44,20 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME':'dnjvp8b90',
     'API_KEY':'868796568785493',
     'API_SECRET':'Kjw2gsLiSMFmos_rtPL7KB9lMEE'
 }
+
+cloudinary.config(
+    cloud_name='dnjvp8b90',
+    api_key='868796568785493',
+    api_secret='Kjw2gsLiSMFmos_rtPL7KB9lMEE',
+    secure=True
+)
 
 
 AUTH_USER_MODEL = 'app.User'

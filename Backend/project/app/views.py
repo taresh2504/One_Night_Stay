@@ -204,6 +204,7 @@ class SubscriptionPlanListView(generics.ListCreateAPIView):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer   
 
+
 class SubscriptionPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer              
@@ -221,3 +222,7 @@ class UserSubscriptionCreateView(generics.CreateAPIView):
         user=self.request.user,
         end_date=timezone.now() + timedelta(days=30)
     )
+        
+class UserSubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserSubscription.objects.all()
+    serializer_class = UserSubscriptionSerializer       

@@ -37,6 +37,7 @@ urlpatterns = [
     path('properties/<int:pk>/', PropertyDetailView.as_view(),name='property-detail'),
     path('property-images/',PropertyImageListCreateView.as_view(),name='property-image-list-create'),
     path('subscribe/',UserSubscriptionCreateView.as_view(),name='subscribe'),
+    path('subscriptions/<int:pk>/',UserSubscriptionDetailView.as_view(),name='subscription-detail'),
 ]
 
 # if settings.DEBUG:
