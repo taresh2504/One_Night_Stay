@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
-    def validate_name(self, value):
+    def validate_name(self, value):     
 
         if len(value.strip()) < 4:
             raise serializers.ValidationError(
@@ -135,7 +135,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    password = serializers.CharField()    
+    password = serializers.CharField() 
+       
  
 class PropertySerializer(serializers.ModelSerializer):
 

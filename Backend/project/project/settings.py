@@ -45,7 +45,6 @@ INSTALLED_APPS = [
 ]
 
 
-
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME':'dnjvp8b90',
     'API_KEY':'868796568785493',
@@ -102,7 +101,7 @@ DATABASES = {
         'NAME': 'One_Night_Stay',
         'USER': 'postgres',
         'PASSWORD': 'Tandy@123',
-        'HOST': 'localhost',
+        'HOST': 'localhost', 
         'PORT': '5432',
     }
 }
