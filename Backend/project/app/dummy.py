@@ -44,3 +44,6 @@ update_2='Till now, I have mainly worked on backend development using Django RES
 update_3 = 'just a small update regarding project that the backend is going to complete in few days'
 
 print(update_3)
+
+update_4 = 'booking,wishlist,payment,review,logout all these apis are pending'
+print(update_4)
