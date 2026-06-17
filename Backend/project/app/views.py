@@ -225,4 +225,154 @@ class UserSubscriptionCreateView(generics.CreateAPIView):
         
 class UserSubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserSubscription.objects.all()
-    serializer_class = UserSubscriptionSerializer       
+    serializer_class = UserSubscriptionSerializer  
+
+
+class WishlistView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        wishlist = Wishlist.objects.filter(
+            user=request.user
+        ).select_related('property')
+
+        serializer = WishlistSerializer(
+            wishlist,
+            many=True
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+
+        serializer = WishlistSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+
+        if serializer.is_valid():
+
+            serializer.save(
+                user=request.user
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )    
+
+class WishlistDeleteView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, property_id):
+
+        wishlist_item = Wishlist.objects.filter(
+            user=request.user,
+            property_id=property_id
+        ).first()
+
+        if not wishlist_item:
+            return Response(
+                {
+                    "error":
+                    "Property not found in wishlist."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        wishlist_item.delete()
+
+        return Response(
+            {
+                "message":
+                "Property removed from wishlist."
+            },
+            status=status.HTTP_200_OK
+        )
+
+class BookingView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        bookings = Booking.objects.filter(
+            user=request.user
+        ).select_related(
+            'property'
+        )
+
+        serializer = BookingSerializer(
+            bookings,
+            many=True
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+
+        serializer = BookingSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+
+        if serializer.is_valid():
+
+            serializer.save(
+                user=request.user
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class CancelBookingView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, booking_id):
+
+        booking = Booking.objects.filter(
+            id=booking_id,
+            user=request.user
+        ).first()
+
+        if not booking:
+            return Response(
+                {
+                    "error":
+                    "Booking not found."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        booking.booking_status = 'cancelled'
+        booking.save()
+
+        return Response(
+            {
+                "message":
+                "Booking cancelled successfully."
+            },
+            status=status.HTTP_200_OK
+        )                 

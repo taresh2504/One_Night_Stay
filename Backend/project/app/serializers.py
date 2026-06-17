@@ -279,10 +279,10 @@ class PropertyImageSerializer(serializers.ModelSerializer):
         return value    
     
 
-
 class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
+
         model = Booking
 
         fields = [
@@ -293,7 +293,6 @@ class BookingSerializer(serializers.ModelSerializer):
             'check_out',
             'total_price',
             'guests_count',
-            'tax_amount',
             'booking_status',
             'created_at'
         ]
@@ -301,7 +300,9 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id',
             'created_at',
-            'user'
+            'user',
+            'total_price',
+            'booking_status'
         ]
 
     def validate_check_in(self, value):
@@ -321,8 +322,23 @@ class BookingSerializer(serializers.ModelSerializer):
         user = request.user if request else None
 
         property_obj = data.get('property')
+        guests_count = data.get('guests_count')
         check_in = data.get('check_in')
         check_out = data.get('check_out')
+
+        if (
+            property_obj
+            and guests_count
+            and guests_count > property_obj.max_guests
+        ):
+            errors['guests_count'] = (
+                "Guest limit exceeded."
+            )
+
+            if errors:
+                raise serializers.ValidationError(errors)
+
+            return data
 
         if (
             user
@@ -343,9 +359,11 @@ class BookingSerializer(serializers.ModelSerializer):
             )
 
         if errors:
-            raise serializers.ValidationError(errors)
+            raise serializers.ValidationError(
+                errors
+            )
 
-        return data  
+        return data
     
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -564,7 +582,6 @@ class WishlistSerializer(serializers.ModelSerializer):
     def validate(self, data):
 
         user = self.context['request'].user
-
         property_obj = data.get('property')
 
         if user == property_obj.owner:
@@ -573,4 +590,14 @@ class WishlistSerializer(serializers.ModelSerializer):
                 'You cannot add your own property to wishlist.'
             })
 
-        return data      
+        if Wishlist.objects.filter(
+            user=user,
+            property=property_obj
+        ).exists():
+
+            raise serializers.ValidationError({
+                'property':
+                'Property already exists in wishlist.'
+            })
+
+        return data    

@@ -38,6 +38,10 @@ urlpatterns = [
     path('property-images/',PropertyImageListCreateView.as_view(),name='property-image-list-create'),
     path('subscribe/',UserSubscriptionCreateView.as_view(),name='subscribe'),
     path('subscriptions/<int:pk>/',UserSubscriptionDetailView.as_view(),name='subscription-detail'),
+    path('wishlist/',WishlistView.as_view(),name='wishlist'),
+    path('wishlist/<int:property_id>/',WishlistDeleteView.as_view(),name='wishlist-delete'),
+    path('booking/',BookingView.as_view(),name='booking'),
+    path('booking/<int:booking_id>/cancel/',CancelBookingView.as_view(),name='cancel-booking'),
 ]
 
 # if settings.DEBUG:

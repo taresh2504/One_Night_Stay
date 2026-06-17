@@ -201,24 +201,40 @@ class Booking(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='bookings')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='bookings'
+    )
 
-    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='bookings')
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        related_name='bookings'
+    )
 
     check_in = models.DateField()
 
     check_out = models.DateField()
 
-    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    total_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
 
-    booking_status = models.CharField(max_length=20,choices=BOOKING_STATUS_CHOICES,default='pending')
+    booking_status = models.CharField(
+        max_length=20,
+        choices=BOOKING_STATUS_CHOICES,
+        default='pending'
+    )
 
     guests_count = models.PositiveIntegerField()
 
-    tax_amount = models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    
     def clean(self):
 
         errors = {}
@@ -228,27 +244,17 @@ class Booking(models.Model):
                 "You cannot book your own property."
             )
 
-        if self.total_price <= 0:
-            errors['total_price'] = (
-                "Total price must be greater than zero."
-            )    
-
-        if self.tax_amount < 0:
-            errors['tax_amount'] = (
-                "Tax cannot be negative."
-            )
-
         if self.check_out <= self.check_in:
             errors['check_out'] = (
                 "Check-out must be after check-in."
             )
 
         existing_booking = Booking.objects.filter(
-        property=self.property,
-        booking_status='confirmed',
-        check_in__lt=self.check_out,
-        check_out__gt=self.check_in
-    ).exclude(pk=self.pk)
+            property=self.property,
+            booking_status='confirmed',
+            check_in__lt=self.check_out,
+            check_out__gt=self.check_in
+        ).exclude(pk=self.pk)
 
         if existing_booking.exists():
             errors['property'] = (
@@ -258,23 +264,36 @@ class Booking(models.Model):
         if self.guests_count <= 0:
             errors['guests_count'] = (
                 "Guests must be at least 1."
-            )    
+            )
 
         if self.guests_count > self.property.max_guests:
             errors['guests_count'] = (
                 "Guest limit exceeded."
-            )    
+            )
 
         if errors:
             raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
+
+        nights = (
+            self.check_out - self.check_in
+        ).days
+
+        self.total_price = (
+            self.property.price * nights
+        )
+
         self.full_clean()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user.email} - {self.property.title}"    
 
+        return (
+            f"{self.user.email} - "
+            f"{self.property.title}"
+        )
 
 
 class Review(models.Model):
