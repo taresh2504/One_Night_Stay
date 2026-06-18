@@ -375,4 +375,93 @@ class CancelBookingView(APIView):
                 "Booking cancelled successfully."
             },
             status=status.HTTP_200_OK
-        )                 
+        )
+
+
+class HostBookingListView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        bookings = Booking.objects.filter(
+            property__owner=request.user
+        ).select_related(
+            'user',
+            'property'
+        )
+
+        serializer = BookingSerializer(
+            bookings,
+            many=True
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
+
+class ApproveBookingView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, booking_id):
+
+        booking = Booking.objects.filter(
+            id=booking_id,
+            property__owner=request.user
+        ).first()
+
+        if not booking:
+
+            return Response(
+                {
+                    "error":
+                    "Booking not found."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        booking.booking_status = 'confirmed'
+        booking.save()
+
+        return Response(
+            {
+                "message":
+                "Booking approved successfully."
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class RejectBookingView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, booking_id):
+
+        booking = Booking.objects.filter(
+            id=booking_id,
+            property__owner=request.user
+        ).first()
+
+        if not booking:
+
+            return Response(
+                {
+                    "error":
+                    "Booking not found."
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        booking.booking_status = 'cancelled'
+        booking.save()
+
+        return Response(
+            {
+                "message":
+                "Booking rejected successfully."
+            },
+            status=status.HTTP_200_OK
+        )                             

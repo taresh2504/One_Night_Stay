@@ -42,10 +42,9 @@ urlpatterns = [
     path('wishlist/<int:property_id>/',WishlistDeleteView.as_view(),name='wishlist-delete'),
     path('booking/',BookingView.as_view(),name='booking'),
     path('booking/<int:booking_id>/cancel/',CancelBookingView.as_view(),name='cancel-booking'),
+    path('host/bookings/',HostBookingListView.as_view(),name='host-bookings'),
+    path('host/bookings/<int:booking_id>/approve/',ApproveBookingView.as_view(),name='approve-booking'),
+    path('host/bookings/<int:booking_id>/reject/',RejectBookingView.as_view(),name='reject-booking'),
 ]
 
-# if settings.DEBUG:
-#     urlpatterns += static(
-#         settings.MEDIA_URL,
-#         document_root=settings.MEDIA_ROOT
-#     )
+
