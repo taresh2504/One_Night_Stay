@@ -4,37 +4,37 @@ from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
 from django.utils import timezone
 
-class UserManager(BaseUserManager):
+# class UserManager(BaseUserManager):
 
-    def create_user(self, email, name, phone, password=None, **extra_fields):
+#     def create_user(self, email, name, phone, password=None, **extra_fields):
 
-        if not email:
-            raise ValueError('Email is required')
+#         if not email:
+#             raise ValueError('Email is required')
 
-        email = self.normalize_email(email)
+#         email = self.normalize_email(email)
 
-        user = self.model(
-            email=email,
-            name=name,
-            phone=phone,
-            **extra_fields
-        )
+#         user = self.model(
+#             email=email,
+#             name=name,
+#             phone=phone,
+#             **extra_fields
+#         )
 
-        user.set_password(password)
-        user.save(using=self._db)
+#         user.set_password(password)
+#         user.save(using=self._db)
 
-        return user
+#         return user
 
 
-    def create_superuser(self, email, name, phone, password=None, **extra_fields):
+#     def create_superuser(self, email, name, phone, password=None, **extra_fields):
 
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('role', 'admin')
+#         extra_fields.setdefault('is_staff', True)
+#         extra_fields.setdefault('is_superuser', True)
+#         extra_fields.setdefault('role', 'admin')
 
-        return self.create_user(
-            email, name, phone, password, **extra_fields
-        )
+#         return self.create_user(
+#             email, name, phone, password, **extra_fields
+#         )
 
 class User(AbstractUser):
 
@@ -69,7 +69,7 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['name', 'phone']
 
-    objects = UserManager()
+    # objects = UserManager()
 
     def __str__(self):
         return self.email
@@ -473,7 +473,7 @@ class Payment(models.Model):
 
     razorpay_signature = models.CharField(max_length=500,blank=True,null=True)
 
-    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    amount = models.DecimalField(max_digits=10,decimal_places=2,default=0)
 
     PAYMENT_STATUS_CHOICES = [
     ('pending', 'Pending'),
@@ -532,6 +532,10 @@ class Payment(models.Model):
             raise ValidationError(errors)   
 
     def save(self, *args, **kwargs):
+
+        if self.booking:
+            self.amount = self.booking.total_price
+
         self.full_clean()
         super().save(*args, **kwargs)
 

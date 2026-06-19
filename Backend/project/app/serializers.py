@@ -126,10 +126,11 @@ class UserSerializer(serializers.ModelSerializer):
 
         password = validated_data.pop('password')
 
-        user = User.objects.create_user(
-            password=password,
-            **validated_data
-        )
+        user = User(**validated_data)
+
+        user.set_password(password)
+
+        user.save()
 
         return user
 
@@ -557,7 +558,8 @@ class PaymentSerializer(
         read_only_fields = [
             'id',
             'created_at',
-            'user'
+            'user',
+            'amount'
         ]
 
 class WishlistSerializer(serializers.ModelSerializer):

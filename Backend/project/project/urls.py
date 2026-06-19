@@ -45,6 +45,17 @@ urlpatterns = [
     path('host/bookings/',HostBookingListView.as_view(),name='host-bookings'),
     path('host/bookings/<int:booking_id>/approve/',ApproveBookingView.as_view(),name='approve-booking'),
     path('host/bookings/<int:booking_id>/reject/',RejectBookingView.as_view(),name='reject-booking'),
+    path('payment/',PaymentListCreateView.as_view(),name='payment-list-create'),
+    path('payment/<int:pk>/',PaymentDetailView.as_view(),name='payment-detail'),
+    path('review/',ReviewListCreateView.as_view(),name='review-list-create'),
+    path('review/<int:pk>/',ReviewDetailView.as_view(),name='review-detail'),
+    path('properties/search/',PropertySearchView.as_view(),name='property-search'),
+    path('logout/',LogoutView.as_view(),name='logout'),
+    path('profile/', MyProfileView.as_view(), name='profile'),
+    path('my-properties/', MyPropertiesView.as_view(), name='my-properties'),
+    path('my-bookings/', MyBookingsView.as_view(), name='my-bookings'),
+    path('my-payments/', MyPaymentsView.as_view(), name='my-payments'),
+    path('properties/<int:property_id>/reviews/', PropertyReviewsView.as_view(), name='property-reviews'),
 ]
 
 
