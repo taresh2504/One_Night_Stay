@@ -698,6 +698,7 @@ class LogoutView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             ) 
 
+
 class MyProfileView(APIView):
 
     permission_classes = [IsAuthenticated]

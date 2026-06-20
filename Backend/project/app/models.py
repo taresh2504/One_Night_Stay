@@ -37,60 +37,39 @@ from django.utils import timezone
 #         )
 
 class User(AbstractUser):
-
     username = None
-
     ROLE_CHOICES = [
         ('user', 'User'),
         ('host', 'Host'),
         ('admin', 'Admin'),
     ]
-
     HOST_STATUS_CHOICES = [
         ('none', 'Not Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-
     name = models.CharField(max_length=100)
-
     email = models.EmailField(unique=True)
-
     phone = models.CharField(max_length=10,unique=True)
-
     role = models.CharField(max_length=20,choices=ROLE_CHOICES,default='user')
-
     host_status = models.CharField(max_length=20,choices=HOST_STATUS_CHOICES,default='none')
-
     created_at = models.DateTimeField(auto_now_add=True)
-
     USERNAME_FIELD = 'email'
-
     REQUIRED_FIELDS = ['name', 'phone']
-
     # objects = UserManager()
-
     def __str__(self):
         return self.email
 
 
 class Property(models.Model):
-
     owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name='properties')
-
     title = models.CharField(max_length=255)
-
     location = models.CharField(max_length=255)
-
     price = models.DecimalField(max_digits=10,decimal_places=2)
-
     bedrooms = models.PositiveIntegerField()
-
     bathrooms = models.PositiveIntegerField()
-
     description = models.TextField()
-
     PROPERTY_TYPE_CHOICES = [
         ('room', 'Room'),
         ('flat', 'Flat'),
@@ -98,17 +77,11 @@ class Property(models.Model):
         ('resort', 'Resort'),
         ('bungalow', 'Bungalow'),
     ]
-
     property_type = models.CharField(max_length=20,choices=PROPERTY_TYPE_CHOICES)
-
     max_guests = models.PositiveIntegerField()
-
     beds = models.PositiveIntegerField()
-
     is_featured = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
-
     def clean(self):
 
         errors = {}
@@ -159,18 +132,8 @@ class Property(models.Model):
 
 
 class PropertyImage(models.Model):
-
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-
-    image = CloudinaryField(
-        'property_image',
-        folder='internship_media/property_images'
-    )
-
+    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='images')
+    image = CloudinaryField('property_image',folder='internship_media/property_images')
     IMAGE_TYPE_CHOICES = [
         ('hall', 'Hall'),
         ('bedroom', 'Bedroom'),
@@ -179,62 +142,26 @@ class PropertyImage(models.Model):
         ('kitchen', 'Kitchen'),
         ('exterior', 'Exterior'),
     ]
-
-    image_type = models.CharField(
-        max_length=50,
-        choices=IMAGE_TYPE_CHOICES
-    )
-
-    uploaded_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
+    image_type = models.CharField(max_length=50,choices=IMAGE_TYPE_CHOICES)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.property.title} - {self.image_type}"
 
 
 class Booking(models.Model):
-
     BOOKING_STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled'),
     ]
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
-
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
-
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='bookings')
+    property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='bookings')
     check_in = models.DateField()
-
     check_out = models.DateField()
-
-    total_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0
-    )
-
-    booking_status = models.CharField(
-        max_length=20,
-        choices=BOOKING_STATUS_CHOICES,
-        default='pending'
-    )
-
+    total_price = models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    booking_status = models.CharField(max_length=20,choices=BOOKING_STATUS_CHOICES,default='pending')
     guests_count = models.PositiveIntegerField()
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
+    created_at = models.DateTimeField(auto_now_add=True)
     def clean(self):
 
         errors = {}
