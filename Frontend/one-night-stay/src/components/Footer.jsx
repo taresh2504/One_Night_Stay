@@ -24,16 +24,20 @@ const Footer = () => {
 
         <div className='navlist3'>
             <p className='navlist3fb'>
-                <FaFacebookSquare/><div className='nav-link'>One_Night_Stay</div>
+                <FaFacebookSquare/><div className='nav-link3'>One_Night_Stay</div>
             </p>
             <p className='navlist3ig'>
-            <GrInstagram/><div className='nav-link'>One_Night_Stay</div>
+              <GrInstagram/><div className='nav-link3'>One_Night_Stay</div>
             </p>
             <p className='navlist3tw'>
-            <FaXTwitter/><div className='nav-link'>One_Night_Stay</div>
+              <FaXTwitter/><div className='nav-link3'>One_Night_Stay</div>
             </p>
         </div>
 
+      </div>
+
+      <div className='endline'>
+        <p className='nav-link3'>© 2026 One_Night_Stay | Helpline: 007 | All Rights Reserved</p>
       </div>
     </div>  
     </>

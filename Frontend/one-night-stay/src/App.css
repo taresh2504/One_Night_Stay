@@ -1,3 +1,14 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+}
+
 .navbar{
   border: 1px solid black;
   height: 100px;
@@ -56,6 +67,7 @@
   margin-top: 2.5px;
 }
 
+/* Footer css begins */
 .footerbox{
   border: 0.5px solid black;
   width: 100%;
@@ -63,27 +75,229 @@
 }
 
 .footer{
-  border: 1px solid black;
+  border: 0.1px solid white;
   width: 100%;
   height: 120px;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  /* display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start; */
 }
 
 .navlist2{
   list-style: none;
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .navlist3{
   display: flex;
-  justify-content: center;
   flex-direction: column;
+  gap: 15px;
+}
+
+.navlist3 p{
+  margin: 0;
+}
+
+.navlist3fb,
+.navlist3ig,
+.navlist3tw{
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav-link3{
+  text-decoration: none;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  color: black;
+}
+
+.endline{
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.navlist3a{
+
+/* Homesearch css begins */
+
+.srchhomeholder{
+  position: relative;
+  height: 450px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hotelvideo{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+}
+
+.searchbox{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.searchbox h1{
+  color: white;
+  font-size: 40px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.searchbar{
+  display: flex;
+  align-items: center;
+}
+
+.searchbar input{
+  width: 500px;
+  height: 50px;
+  border: none;
+  outline: none;
+  padding: 0 15px;
+  font-size: 16px;
+  border-radius: 8px 0 0 8px;
+}
+
+.searchbar button{
+  height: 50px;
+  width: 120px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #ff6b00;
+  color: white;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Cardholder css begins */
+
+.cardholder{
+  width: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cardholder:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.20);
+}
+
+.imagecontainer{
+  position: relative;
+}
+
+.propertyimage{
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.wishlisticon{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+
+.cardcontent{
+  padding: 12px;
+}
+
+.propertyname{
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.propertylocation{
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.propertyrating{
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.wishlistcontainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.propertyprice{
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+}
+
+.propertyprice span{
+  font-size: 14px;
+  color: #777;
+  font-weight: normal;
+}
+
+.wishlistbutton{
+  border: none;
+  background: #ff5a5f;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.wishlistbutton:hover{
+  opacity: 0.9;
+}
+
+/* Register Page css */
+
+.registerbox{
+  border: 1px solid black;
+  height: 500px;
+  width: 400px;
+  border-radius: 15px;
+}
+
+.registerhere{
+  text-align: center;
 }
