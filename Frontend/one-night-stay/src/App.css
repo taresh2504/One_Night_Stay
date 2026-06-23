@@ -291,13 +291,294 @@ body{
 
 /* Register Page css */
 
-.registerbox{
-  border: 1px solid black;
-  height: 500px;
-  width: 400px;
-  border-radius: 15px;
+.register-container{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f6f9;
 }
 
-.registerhere{
+.register-box{
+  width: 400px;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+}
+
+.register-title{
   text-align: center;
+  margin-bottom: 20px;
+}
+
+.register-box label{
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.register-box input{
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.register-box input:focus{
+  border-color: #007bff;
+}
+
+.register-box button{
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
+}
+
+.register-box button:hover{
+  background-color: #0056d2;
+}
+
+.login-text{
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-text a{
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 600;
+}
+
+/* Login css */
+
+.login-container{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f6f9;
+}
+
+.login-box{
+    width: 400px;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+}
+
+.login-title{
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.login-box label{
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.login-box input{
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    margin-bottom: 15px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+
+.login-box input:focus{
+    border-color: #007bff;
+}
+
+.login-box button{
+    width: 100%;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 25px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-box button:hover{
+    background-color: #0056d2;
+}
+
+.register-text{
+    text-align: center;
+    margin-top: 15px;
+    
+}
+
+.register-text a{
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 600;
+    
+}
+
+/* About page */
+
+.about-container{
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.about-box{
+    max-width: 900px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.about-heading{
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+.about-info{
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 18px;
+    text-align: justify;
+}
+
+/* Contact css  */
+
+.contact-container{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f6f9;
+    padding: 20px;
+}
+
+.contact-box{
+    width: 600px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+}
+
+.contact-heading{
+    text-align: center;
+    margin-bottom: 30px;
+    color: #222;
+}
+
+.contact-info h3{
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: #007bff;
+}
+
+.contact-info p{
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.social-links p{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.social-icon{
+    font-size: 20px;
+}
+
+/* Service css */
+.services-container{
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    padding: 50px 20px;
+}
+
+.services-heading{
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 40px;
+    color: #222;
+}
+
+.services-heading::after{
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    margin: 10px auto;
+    background-color: #007bff;
+    border-radius: 10px;
+}
+
+.services-box{
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* .service-card-holder{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.service-card{
+    background-color: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.service-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+}
+
+.service-card h3{
+    margin-bottom: 15px;
+    color: #007bff;
+    font-size: 22px;
+}
+
+.service-card p{
+    color: #555;
+    line-height: 1.6;
+    font-size: 16px;
 }

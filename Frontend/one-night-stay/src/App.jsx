@@ -8,6 +8,10 @@ import Homesearch from './components/Homesearch'
 import Propertycard from './components/Propertycard'
 import Footer from './components/Footer'
 import Register from './pages/Register'
+import Login from './pages/Login'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Services from './pages/Services'
 
 const App = () => {
   return (
@@ -18,7 +22,11 @@ const App = () => {
       <Propertycard/>
       <br />
       <Footer/> */}
-      <Register/>
+      {/* <Register/> */}
+      {/* <Login/> */}
+      {/* <About/> */}
+      {/* <Contact/> */}
+      <Services/>
     </>
   )
 }

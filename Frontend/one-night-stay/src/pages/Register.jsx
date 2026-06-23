@@ -1,34 +1,38 @@
-import React from 'react'
-import '../App.css'
+import React from 'react';
+import '../App.css';
 
 const Register = () => {
   return (
-    <>
-      <div className='registerbox'>
-        <form action="" method="post">
-          <h1 className='registerhere'>Register Here</h1> <br />
-          <p>Enter Name</p>
-          <input type="text" placeholder='Enter your Name' required name=""  id="" /> <br /><br />
+    <div className="register-container">
+      <div className="register-box">
+        <h2 className="register-title">Register Here</h2>
 
-          <p>Enter Email</p>
-          <input type="email" placeholder='Enter your Email' required name=""  id="" /> <br /><br />
+        <form method="post">
+          <label>Full Name</label>
+          <input type="text" placeholder="Enter your name"/>
 
-          <p>Enter Number</p>
-          <input type="text" placeholder='Enter your Number' required maxLength={10} name=""  id="" /> <br /><br />
+          <label>Email</label>
+          <input type="email" placeholder="Enter your email"/>
 
-          <p>Enter Password</p>
-          <input type="password" placeholder='Enter your Password' required maxLength={15} minLength={8} name=""  id="" /> <br /><br />
+          <label>Phone Number</label>
+          <input type="tel" placeholder="Enter phone number"/>
 
-          <p>Enter Confirm Password</p>
-          <input type="password" placeholder='Enter your Confirm Password' required maxLength={15} minLength={8} name=""  id="" /> <br /><br />
+          <label>Password</label>
+          <input type="password" placeholder="Enter password"/>
 
-          <button type="submit">Register</button> <br /><br />
+          <label>Confirm Password</label>
+          <input type="password" placeholder="Confirm password"/>
 
-          <p>Already a user ?<span>Log-in</span></p>
+          <button type="submit">Create Account</button>
         </form>
-      </div>
-    </>
-  )
-}
 
-export default Register
+        <p className="login-text">
+          Already have an account?{' '}
+          <a href="/login">Login</a>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
