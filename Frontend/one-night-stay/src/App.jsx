@@ -12,6 +12,7 @@ import Login from './pages/Login'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Services from './pages/Services'
+import Properties from './pages/Properties'
 
 const App = () => {
   return (
@@ -26,7 +27,8 @@ const App = () => {
       {/* <Login/> */}
       {/* <About/> */}
       {/* <Contact/> */}
-      <Services/>
+      {/* <Services/> */}
+      <Properties/>
     </>
   )
 }

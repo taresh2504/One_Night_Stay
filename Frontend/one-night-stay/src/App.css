@@ -582,3 +582,196 @@ body{
     line-height: 1.6;
     font-size: 16px;
 }
+
+/* Properties css begin  */
+/* Properties CSS */
+
+.search-and-sortholder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.search-and-sortholder input{
+    width: 350px;
+    height: 45px;
+    padding: 0 15px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-and-sortholder input:focus{
+    border-color: #007bff;
+}
+
+.search-and-sortholder button{
+    height: 45px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.search-and-sortholder select{
+    width: 220px;
+    height: 45px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+
+/* Property Card */
+
+.properties-card{
+    width: 90%;
+    height: 260px;   /* fixed card height */
+    margin: 25px auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+    display: flex;
+    padding: 15px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.properties-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.15);
+}
+
+
+/* Photos */
+
+.photo-section{
+    width: 40%;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+}
+
+.main-photo{
+    width: 80%;
+    height: 100%;
+}
+
+.main-photo img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 15px;
+}
+
+
+/* .sub-photo{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+} */
+
+.sub-photo{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sub-photo img{
+    width: 100%;
+    height: 31%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+
+/* Details */
+
+.detail{
+    width: 60%;
+    height: 100%;
+    padding: 10px;
+}
+
+.detail h1{
+    font-size: 28px;
+    color: #222;
+}
+
+.detail h3{
+    color: #666;
+    font-weight: 500;
+}
+
+
+/* Facilities */
+
+.facility{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.facility p{
+    background: #f4f6f9;
+    padding: 8px 15px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-size: 15px;
+}
+
+
+/* Bottom Section */
+
+.detail-end{
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-end h2{
+    color: #007bff;
+    font-size: 30px;
+}
+
+.detail-buttons{
+    display: flex;
+    gap: 15px;
+}
+
+.detail-buttons button{
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.detail-buttons form:first-child button{
+    background: #f4f6f9;
+    color: #333;
+}
+
+.detail-buttons form:last-child button{
+    background: #007bff;
+    color: white;
+}
+
+.detail-buttons button:hover{
+    opacity: 0.9;
+    transform: scale(1.03);
+}
