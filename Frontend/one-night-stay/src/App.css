@@ -17,6 +17,7 @@ body{
   justify-content: center;
   align-items: center;
   gap: 380px;
+  background-color: grey;
 }
 
 .navlogo{
@@ -50,6 +51,21 @@ body{
   gap: 15px;
 }
 
+.profile-link{
+  text-decoration: none;
+}
+
+.profile-icon{
+  font-size: 40px;
+  color: #007bff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-icon:hover{
+  transform: scale(1.1);
+}
+
 .nav-link2{
   border: 1px solid black;
   height: 25px;
@@ -72,6 +88,7 @@ body{
   border: 0.5px solid black;
   width: 100%;
   height: 170px;
+  background-color: grey;
 }
 
 .footer{
@@ -218,7 +235,7 @@ body{
 .propertyimage{
   width: 100%;
   height: 180px;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -775,3 +792,1118 @@ body{
     opacity: 0.9;
     transform: scale(1.03);
 }
+
+/* Property details css */
+/* Property Details Page */
+
+.details-container{
+    width: 90%;
+    margin: 30px auto;
+    padding: 20px;
+    background: #f4f6f9;
+}
+
+/* Main Image */
+
+.image-gallery{
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+}
+
+.main-image{
+    width: 100%;
+    height: 500px;
+    object-fit: contain;
+    border-radius: 15px;
+}
+
+/* Thumbnail Images */
+
+.gallery-row{
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+}
+
+.gallery-row img{
+    width: 24%;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.gallery-row img:hover{
+    transform: scale(1.03);
+}
+
+/* Property Info */
+
+.property-info{
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+}
+
+.property-info h1{
+    font-size: 38px;
+    color: #222;
+}
+
+.property-info h3{
+    color: #666;
+    margin-top: 10px;
+}
+
+.property-info h2{
+    color: #007bff;
+    margin-top: 15px;
+    font-size: 32px;
+}
+
+.property-info p{
+    margin-top: 15px;
+    line-height: 1.8;
+    color: #555;
+}
+
+/* Amenities */
+
+.amenities{
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+}
+
+.amenities h2{
+    margin-bottom: 20px;
+}
+
+.facility-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.facility-list p{
+    background: #f4f6f9;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 15px;
+}
+
+/* Property Information */
+
+.property-meta{
+    margin-top: 25px;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 15px;
+}
+
+.property-meta h2{
+    grid-column: span 2;
+}
+
+.property-meta p{
+    background: #f4f6f9;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+/* Buttons */
+
+.action-buttons{
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-buttons button{
+    padding: 14px 30px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.action-buttons button:first-child{
+    background: #f4f6f9;
+    color: #333;
+}
+
+.action-buttons button:last-child{
+    background: #007bff;
+    color: white;
+}
+
+.action-buttons button:hover{
+    transform: translateY(-3px);
+}
+
+/* Booking css begin  */
+
+/* Booking Page */
+
+.booking-container{
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.booking-card{
+    width: 550px;
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+.booking-container h1{
+    text-align: center;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+.booking-card h2{
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.booking-card p{
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.booking-card h3{
+    color: #007bff;
+    margin-bottom: 25px;
+}
+
+.booking-card form{
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-card label{
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+.booking-card input{
+    height: 45px;
+    padding: 0 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    outline: none;
+}
+
+.booking-card input:focus{
+    border-color: #007bff;
+}
+
+.total-price{
+    margin: 15px 0;
+    padding: 15px;
+    background: #f4f6f9;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.total-price h2{
+    color: #007bff;
+    margin: 0;
+}
+
+.confirm-btn{
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.confirm-btn:hover{
+    background: #0056d2;
+}
+
+/* Payment Page css */
+/* Payment Page */
+
+.payment-container{
+    min-height: 100vh;
+    background: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.payment-card{
+    width: 650px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+.payment-card h1{
+    text-align: center;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+.booking-summary{
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 20px;
+}
+
+.booking-summary h2{
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.booking-summary p{
+    color: #666;
+}
+
+.summary-details{
+    margin-top: 15px;
+}
+
+.summary-details p{
+    margin-bottom: 8px;
+}
+
+.amount-section{
+    margin: 25px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.amount-section h3{
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.amount-section h2{
+    color: #007bff;
+    font-size: 36px;
+}
+
+.payment-method{
+    margin-bottom: 25px;
+}
+
+.payment-method h3{
+    margin-bottom: 15px;
+}
+
+.payment-method label{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.pay-btn{
+    width: 100%;
+    height: 55px;
+    border: none;
+    border-radius: 12px;
+    background: #007bff;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pay-btn:hover{
+    background: #0056d2;
+}
+
+/* Payment success css */
+/* Payment Success Page */
+
+.success-container{
+    min-height: 100vh;
+    background: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.success-card{
+    width: 650px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+.success-icon{
+    font-size: 70px;
+    margin-bottom: 15px;
+}
+
+.success-card h1{
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.success-message{
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.booking-info{
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.info-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.info-row:last-child{
+    border-bottom: none;
+}
+
+.confirmed{
+    color: #28a745;
+    font-weight: bold;
+}
+
+.success-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.booking-btn{
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.home-btn{
+    background: #f1f1f1;
+    color: #333;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.booking-btn:hover,
+.home-btn:hover{
+    transform: translateY(-2px);
+    transition: 0.3s;
+}
+
+/* Userprofile css */
+/* User Profile Dashboard */
+
+.profile-container{
+    display: flex;
+    min-height: 100vh;
+    background: #f4f6f9;
+}
+
+/* Sidebar */
+
+.profile-sidebar{
+    width: 280px;
+    background: #1f2937;
+    color: white;
+    padding: 25px 20px;
+}
+
+.profile-header{
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 20px;
+}
+
+.profile-avatar{
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.profile-header h3{
+    margin-bottom: 5px;
+}
+
+.profile-header p{
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+/* Menu */
+
+.profile-menu{
+    list-style: none;
+    padding: 0;
+}
+
+.profile-menu li{
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.profile-menu li:hover{
+    background: #374151;
+}
+
+.active-menu{
+    background: #007bff;
+}
+
+/* Content Area */
+
+.profile-content{
+    flex: 1;
+    padding: 35px;
+}
+
+.profile-content h1{
+    color: #222;
+    margin-bottom: 25px;
+}
+
+.content-box{
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+}
+
+.content-box h2{
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.content-box p{
+    margin-bottom: 15px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.booking-card{
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.08);
+}
+
+.booking-card h3{
+    margin-bottom: 10px;
+}
+
+.booking-card p{
+    margin-bottom: 8px;
+}
+
+.paid{
+    color: green;
+    font-weight: bold;
+}
+
+.confirmed{
+    color: green;
+    font-weight: bold;
+}
+
+.view-booking-btn{
+    margin-top: 15px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.wishlist-card{
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.08);
+}
+
+.wishlist-buttons{
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.view-btn{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.remove-btn{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #dc3545;
+    color: white;
+    cursor: pointer;
+}
+
+.payment-card{
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.08);
+}
+
+.success-status{
+    color: green;
+    font-weight: bold;
+}
+
+.failed-status{
+    color: red;
+    font-weight: bold;
+}
+
+.pending-status{
+    color: orange;
+    font-weight: bold;
+}
+
+.view-payment-btn{
+    margin-top: 15px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.review-card{
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.08);
+}
+
+.review-buttons{
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.edit-review-btn{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.delete-review-btn{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #dc3545;
+    color: white;
+    cursor: pointer;
+}
+
+.become-host-card{
+  background:white;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.become-host-btn{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.add-property-form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.add-property-form input,
+.add-property-form select,
+.add-property-form textarea{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.add-property-form textarea{
+    resize: vertical;
+}
+
+.featured-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.add-property-form button{
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.property-image-form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.property-image-form select,
+.property-image-form input{
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.property-image-form button{
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.host-properties-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.host-property-card{
+    width: 320px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.host-property-card img{
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.host-property-card h3{
+    margin-top: 12px;
+}
+
+.featured-property{
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.property-action-buttons{
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.property-action-buttons button{
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.view-property-btn{
+    background: #007bff;
+    color: white;
+}
+
+.edit-property-btn{
+    background: #ffc107;
+}
+
+.delete-property-btn{
+    background: #dc3545;
+    color: white;
+}
+
+.host-booking-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.confirmed-status{
+    color: green;
+    font-weight: bold;
+}
+
+.pending-status{
+    color: orange;
+    font-weight: bold;
+}
+
+.cancelled-status{
+    color: red;
+    font-weight: bold;
+}
+
+.host-review-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.host-review-card h3{
+    margin-bottom: 10px;
+}
+
+.host-review-card p{
+    margin: 8px 0;
+}
+
+.admin-user-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-user-buttons{
+    margin-top: 15px;
+}
+
+.admin-host-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.approved-host{
+    color: green;
+    font-weight: bold;
+}
+
+.pending-host{
+    color: orange;
+    font-weight: bold;
+}
+
+.rejected-host{
+    color: red;
+    font-weight: bold;
+}
+
+.view-host-btn{
+    margin-top: 15px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.host-approval-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.approval-buttons{
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.approve-btn{
+    background: green;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.reject-btn{
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.admin-property-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-property-buttons{
+    margin-top: 15px;
+}
+
+.admin-property-buttons button{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.admin-booking-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-booking-card p{
+    margin: 8px 0;
+}
+
+.confirmed-status{
+    color: green;
+    font-weight: bold;
+}
+
+.pending-status{
+    color: orange;
+    font-weight: bold;
+}
+
+.cancelled-status{
+    color: red;
+    font-weight: bold;
+}
+
+.admin-payment-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-payment-card p{
+    margin: 8px 0;
+}
+
+.success-status{
+    color: green;
+    font-weight: bold;
+}
+
+.failed-status{
+    color: red;
+    font-weight: bold;
+}
+
+.pending-status{
+    color: orange;
+    font-weight: bold;
+}
+
+.admin-review-card{
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-review-card p{
+    margin: 8px 0;
+}
+
+.admin-review-buttons{
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.view-review-btn{
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-review-btn{
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Subscriptionplan css */
+.plans-container{
+    padding: 40px;
+    text-align: center;
+}
+
+.plans-grid{
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.plan-card{
+    width: 320px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.plan-card h1{
+    margin: 15px 0;
+    color: #0077ff;
+}
+
+.plan-card p{
+    margin: 10px 0;
+}
+
+.plan-description{
+    min-height: 60px;
+}
+
+.apply-btn{
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 8px;
+    background: #0077ff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.skip-host{
+    margin-top: 30px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.skip-host span{
+    color: blue;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Responsive */
+
+/* @media(max-width: 768px){
+
+    .profile-container{
+        flex-direction: column;
+    }
+
+    .profile-sidebar{
+        width: 100%;
+    }
+
+    .profile-content{
+        padding: 20px;
+    }
+
+} */

@@ -13,6 +13,12 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Services from './pages/Services'
 import Properties from './pages/Properties'
+import Propertydetails from './pages/Propertydetails'
+import Booking from './pages/Booking'
+import Payment from './pages/Payment'
+import PaymentSuccess from './pages/PaymentSuccess'
+import UserProfile from './pages/UserProfile'
+import SubscriptionPlans from './pages/SubscriptionPlans'
 
 const App = () => {
   return (
@@ -28,7 +34,13 @@ const App = () => {
       {/* <About/> */}
       {/* <Contact/> */}
       {/* <Services/> */}
-      <Properties/>
+      {/* <Properties/> */}
+      {/* <Propertydetails/> */}
+      {/* <Booking/> */}
+      {/* <Payment/> */}
+      {/* <PaymentSuccess/> */}
+      <UserProfile/>
+      {/* <SubscriptionPlans/> */}
     </>
   )
 }

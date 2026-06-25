@@ -3,8 +3,11 @@ import { useState } from 'react'
 import logo from '../assets/One_Night_Stay_Logo.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 import '../App.css'
+import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
+  const isLoggedIn = false;
+
   return (
     <>
       <div className='navbar'>
@@ -19,11 +22,28 @@ const Navbar = () => {
         </ul>
 
         <div className='butonbox'>
-            <Link className='nav-link2'><div className='reg-name'>Register</div></Link>
-            <Link className='nav-link2'><div className='reg-name'>Log-in</div></Link>
-            {/* <button type="submit"><Link  className='nav-link2'>Register</Link></button>
-            <Link className='nav-link2'><button type="submit">Login</button></Link> */}
-        </div>
+
+  {isLoggedIn ? (
+
+    <Link to="/profile" className="profile-link">
+      <FaUserCircle className="profile-icon" />
+    </Link>
+
+  ) : (
+
+    <>
+      <Link to="/register" className='nav-link2'>
+        <div className='reg-name'>Register</div>
+      </Link>
+
+      <Link to="/login" className='nav-link2'>
+        <div className='reg-name'>Log-in</div>
+      </Link>
+    </>
+
+  )}
+
+</div>
       </div>
     </>
   )

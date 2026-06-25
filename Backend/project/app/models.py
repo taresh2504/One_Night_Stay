@@ -224,15 +224,10 @@ class Booking(models.Model):
 
 
 class Review(models.Model):
-
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='reviews')
-
     property = models.ForeignKey(Property,on_delete=models.CASCADE,related_name='reviews')
-
     rating = models.PositiveSmallIntegerField()
-
     comment = models.TextField()
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
@@ -351,16 +346,23 @@ class SubscriptionPlan(models.Model):
 
 
 class UserSubscription(models.Model):
-
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='subscription')
-
     plan = models.ForeignKey(SubscriptionPlan,on_delete=models.CASCADE)
-
     start_date = models.DateTimeField(auto_now_add=True)
-
     end_date = models.DateTimeField()
-
     is_active = models.BooleanField(default=True)
+
+    APPROVAL_STATUS_CHOICES = [
+    ('pending', 'Pending'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+]
+
+    approval_status = models.CharField(
+        max_length=20,
+        choices=APPROVAL_STATUS_CHOICES,
+        default='pending'
+    )
 
     def clean(self):
 
@@ -389,30 +391,19 @@ class UserSubscription(models.Model):
 
 
 class Payment(models.Model):
-
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='payments')
-
     booking = models.OneToOneField(Booking,on_delete=models.CASCADE,related_name='payment',null=True,blank=True)
-
     razorpay_order_id = models.CharField(max_length=255,unique=True)
-
     razorpay_payment_id = models.CharField(max_length=255,blank=True,null=True)
-
     razorpay_signature = models.CharField(max_length=500,blank=True,null=True)
-
     amount = models.DecimalField(max_digits=10,decimal_places=2,default=0)
-
     PAYMENT_STATUS_CHOICES = [
     ('pending', 'Pending'),
     ('success', 'Success'),
     ('failed', 'Failed'),
 ]
-
-    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS_CHOICES,default='pending')
-
-   
+    payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS_CHOICES,default='pending') 
     paid_at = models.DateTimeField(null=True,blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):

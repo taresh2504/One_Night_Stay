@@ -281,6 +281,20 @@ class PropertyImageSerializer(serializers.ModelSerializer):
     
 
 class BookingSerializer(serializers.ModelSerializer):
+    property_title = serializers.CharField(
+        source='property.title',
+        read_only=True
+    )
+
+    property_location = serializers.CharField(
+        source='property.location',
+        read_only=True
+    )
+
+    property_type = serializers.CharField(
+        source='property.property_type',
+        read_only=True
+    )
 
     class Meta:
 
@@ -290,6 +304,9 @@ class BookingSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'property',
+            'property_title',
+            'property_location',
+            'property_type',
             'check_in',
             'check_out',
             'total_price',
@@ -368,6 +385,16 @@ class BookingSerializer(serializers.ModelSerializer):
     
 
 class ReviewSerializer(serializers.ModelSerializer):
+    property_title = serializers.CharField(
+        source='property.title',
+        read_only=True
+    )
+
+    property_location = serializers.CharField(
+        source='property.location',
+        read_only=True
+    )
+
 
     class Meta:
         model = Review
@@ -376,6 +403,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'property',
+            'property_title',
+            'property_location',
             'rating',
             'comment',
             'created_at'
@@ -563,6 +592,22 @@ class PaymentSerializer(
         ]
 
 class WishlistSerializer(serializers.ModelSerializer):
+    property_title = serializers.CharField(
+        source='property.title',
+        read_only=True
+    )
+
+    property_location = serializers.CharField(
+        source='property.location',
+        read_only=True
+    )
+
+    property_price = serializers.DecimalField(
+        source='property.price',
+        max_digits=10,
+        decimal_places=2,
+        read_only=True
+    )
 
     class Meta:
 
@@ -572,6 +617,9 @@ class WishlistSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'property',
+            'property_title',
+            'property_location',
+            'property_price',
             'created_at'
         ]
 
