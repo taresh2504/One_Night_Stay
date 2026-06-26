@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import '../App.css';
+import axios from "axios";
+import { useEffect } from "react";
 
 const UserProfile = () => {
 
-  const role = "user"; // user | host | admin
+    const name = localStorage.getItem("name");
+    const email = localStorage.getItem("email");
+    const phone = localStorage.getItem("phone");
+    const role = localStorage.getItem("role");
+    const hostStatus = localStorage.getItem("host_status");
+    const createdAt = localStorage.getItem("created_at");// user | host | admin
+    console.log(localStorage.getItem("access"));
 
-  const [activeTab, setActiveTab] = useState("My Profile");
+    const [activeTab, setActiveTab] = useState("My Profile");
+    const [myProperties, setMyProperties] = useState([]);
+    const [myBookings, setMyBookings] = useState([]);
+    const [hostBookings, setHostBookings] = useState([]);
+    const [wishlist, setWishlist] = useState([]);
+    const [hostReviews, setHostReviews] = useState([]);
+    const [payments, setPayments] = useState([]);
+    const [users, setUsers] = useState([]);
 
   const userMenu = [
     "My Profile",
@@ -53,8 +68,185 @@ const UserProfile = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-    navigate("/login");
-    };  
+        localStorage.clear();
+        navigate("/login");
+    };
+
+    useEffect(() => {
+
+    fetchMyProperties();
+    fetchMyBookings();
+    fetchHostBookings();
+    fetchWishlist();
+    fetchHostReviews();
+    fetchPayments();
+
+    }, []);
+
+    useEffect(() => {
+
+    if(role === "admin"){
+        fetchUsers();
+    }
+
+    }, []);
+    
+    const fetchMyProperties = async () => {
+  try {
+    const token = localStorage.getItem("access");
+    console.log("Token:", token);
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/my-properties/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("My Properties:", response.data);
+
+    setMyProperties(response.data);
+
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+
+    const fetchMyBookings = async () => {
+  try {
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/my-bookings/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Host Bookings:", response.data);
+
+    setMyBookings(response.data);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+    const fetchHostBookings = async () => {
+  try {
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/host/bookings/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setHostBookings(response.data);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+    const fetchWishlist = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/my-wishlist/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setWishlist(response.data);
+
+  } catch (error) {
+    console.log(error);
+  }
+
+};
+
+    const fetchHostReviews = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/host/reviews/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setHostReviews(response.data);
+
+  } catch (error) {
+    console.log(error);
+  }
+
+};
+
+    const fetchPayments = async () => {
+
+    try {
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            "http://127.0.0.1:8000/payment-history/",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setPayments(response.data);
+
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+    const fetchUsers = async () => {
+  try {
+    const token = localStorage.getItem("access");
+
+    console.log("Token:", token);
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/users/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Users:", response.data);
+
+    setUsers(response.data);
+
+  } catch (error) {
+    console.log(error.response);
+  }
+};
 
   return (
     <div className="profile-container">
@@ -66,7 +258,7 @@ const UserProfile = () => {
             👤
           </div>
 
-          <h3>Taresh</h3>
+          <h3>{name}</h3>
           <p>{role.toUpperCase()}</p>
         </div>
 
@@ -99,177 +291,105 @@ const UserProfile = () => {
           {activeTab === "My Profile" && (
             <>
               <h2>User Information</h2>
-              <p><strong>Name:</strong> Taresh Tandy</p>
-              <p><strong>Email:</strong> taresh25202@gmail.com</p>
-              <p><strong>Phone:</strong> +91 9876543210</p>
+              <p><strong>Name:</strong> {name}</p>
+              <p><strong>Email:</strong> {email}</p>
+              <p><strong>Phone:</strong> {phone}</p>
               <p><strong>Role:</strong> {role}</p>
 
                 {role === "host" && (
-                <p><strong>Host Status:</strong> Approved</p>
+                <p><strong>Host Status:</strong> {hostStatus}</p>
                 )}
-              <p><strong>Date Joined:</strong> 12 June 2026</p>
+              {/* <p>
+  <strong>Date Joined:</strong>{" "}
+  {new Date(createdAt).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  })}
+</p> */}
             </>
           )}
 
-          {activeTab === "My Bookings" && (
-            <>
-                <h2>My Bookings</h2>
+         
+           {activeTab === "Payment History" && (
+<>
+<h2>Payment History</h2>
 
-                <div className="booking-card">
+<div className="payment-container">
 
-                <h3>The Leela Palace</h3>
+{payments.length === 0 ? (
 
-                <p>📍 New Delhi, India</p>
+<div className="no-data">
+<h3>No Payment History</h3>
 
-                <p>
-                    <strong>Check In:</strong> 15 Aug 2026
-                </p>
+<p>
+You haven't made any payments yet.
+</p>
 
-                <p>
-                    <strong>Check Out:</strong> 18 Aug 2026
-                </p>
+</div>
 
-                <p>
-                    <strong>Guests:</strong> 2
-                </p>
+) : (
 
-                <p>
-                    <strong>Amount Paid:</strong> ₹75,000
-                </p>
+payments.map((payment) => (
 
-                <p>
-                    <strong>Payment Status:</strong>
-                    <span className="paid"> Paid</span>
-                </p>
+<div
+className="admin-payment-card"
+key={payment.id}
+>
 
-                <p>
-                    <strong>Booking Status:</strong>
-                    <span className="confirmed"> Confirmed</span>
-                </p>
+<h3>{payment.property_title}</h3>
 
-                <p>
-                    <strong>Booked On:</strong> 12 Jun 2026
-                </p>
+<p>
+<strong>Location:</strong> {payment.property_location}
+</p>
 
-                <button className="view-booking-btn">
-                    View Details
-                </button>
+<p>
+<strong>Amount:</strong> ₹{payment.amount}
+</p>
 
-                </div>
-            </>
-            )}
+<p>
+<strong>Status:</strong> {payment.payment_status}
+</p>
 
-            {activeTab === "Wishlist" && (
-            <>
-                <h2>My Wishlist</h2>
+<p>
+<strong>Order ID:</strong> {payment.razorpay_order_id}
+</p>
 
-                <div className="wishlist-card">
+<p>
+<strong>Payment ID:</strong>{" "}
+{payment.razorpay_payment_id || "-"}
+</p>
 
-                <h3>The Leela Palace</h3>
+<p>
+<strong>Paid On:</strong>{" "}
+{payment.paid_at
+? new Date(payment.paid_at).toLocaleDateString("en-GB")
+: "-"}
+</p>
 
-                <p>📍 New Delhi, India</p>
+</div>
 
-                <p>
-                    <strong>Price:</strong> ₹25,000 / Night
-                </p>
+))
 
-                <p>
-                    <strong>Added On:</strong> 25 Jun 2026
-                </p>
+)}
 
-                <div className="wishlist-buttons">
-                    <button className="view-btn">
-                    View Details
-                    </button>
+</div>
 
-                    <button className="remove-btn">
-                    Remove
-                    </button>
-                </div>
-
-                </div>
-            </>
-            )}
-
-            {activeTab === "Payment History" && (
-            <>
-                <h2>Payment History</h2>
-
-                <div className="payment-card">
-
-                <h3>The Leela Palace</h3>
-
-                <p>
-                    <strong>Payment Amount:</strong>
-                    ₹25,000
-                </p>
-
-                <p>
-                    <strong>Payment Status:</strong>
-                    <span className="success-status">
-                    Success
-                    </span>
-                </p>
-
-                <p>
-                    <strong>Razorpay Payment ID:</strong>
-                    <br />
-                    pay_SaB8HbfiRFL3Os
-                </p>
-
-                <p>
-                    <strong>Paid On:</strong>
-                    25 Jun 2026
-                </p>
-
-                <p>
-                    <strong>Booking ID:</strong>
-                    #12
-                </p>
-
-                <button className="view-payment-btn">
-                    View Booking
-                </button>
-
-                </div>
-            </>
-            )}
-
+</>
+)}
             {activeTab === "My Reviews" && (
-            <>
-                <h2>My Reviews</h2>
+  <>
+    <h2>My Reviews</h2>
 
-                <div className="review-card">
+    <div className="no-data">
+      <h3>No Reviews Yet</h3>
 
-                <h3>The Leela Palace</h3>
-
-                <p>
-                    <strong>Rating:</strong> ⭐⭐⭐⭐⭐
-                </p>
-
-                <p>
-                    <strong>Comment:</strong>
-                    Amazing stay with excellent service and facilities.
-                </p>
-
-                <p>
-                    <strong>Reviewed On:</strong>
-                    25 Jun 2026
-                </p>
-
-                <div className="review-buttons">
-                    <button className="edit-review-btn">
-                    Edit Review
-                    </button>
-
-                    <button className="delete-review-btn">
-                    Delete Review
-                    </button>
-                </div>
-
-                </div>
-            </>
-            )}
+      <p>
+        You haven't reviewed any property yet.
+      </p>
+    </div>
+  </>
+)}
 
             {activeTab === "Become a Host" && (
                 <>
@@ -413,188 +533,369 @@ const UserProfile = () => {
             )}
 
             {activeTab === "Show Properties" && (
-            <>
-                <h2>My Properties</h2>
+  <>
+    <h2>My Properties</h2>
 
-                <div className="host-properties-container">
+    <div className="host-properties-container">
 
-                <div className="host-property-card">
+      {myProperties.length === 0 ? (
 
-                    <img
-                    src="https://via.placeholder.com/300x180"
-                    alt="property"
-                    />
+        <div className="no-data">
+          <h3>No Properties Found</h3>
+          <p>You haven't added any properties yet.</p>
+        </div>
 
-                    <h3>The Leela Palace</h3>
+      ) : (
 
-                    <p>📍 New Delhi, India</p>
+        myProperties.map((property) => (
 
-                    <p>
-                    <strong>Property Type:</strong> Hotel
-                    </p>
+          <div className="host-property-card" key={property.id}>
 
-                    <p>
-                    <strong>Price:</strong> ₹25,000 / Night
-                    </p>
+            <h3>{property.title}</h3>
 
-                    <p>
-                    <strong>Bedrooms:</strong> 80
-                    </p>
+            <p>📍 {property.location}</p>
 
-                    <p>
-                    <strong>Bathrooms:</strong> 80
-                    </p>
+            <p>
+              <strong>Property Type:</strong> {property.property_type}
+            </p>
 
-                    <p>
-                    <strong>Beds:</strong> 120
-                    </p>
+            <p>
+              <strong>Price:</strong> ₹{property.price} / Night
+            </p>
 
-                    <p>
-                    <strong>Max Guests:</strong> 200
-                    </p>
+            <p>
+              <strong>Bedrooms:</strong> {property.bedrooms}
+            </p>
 
-                    <p>
-                    <strong>Added On:</strong> 12 Jun 2026
-                    </p>
+            <p>
+              <strong>Bathrooms:</strong> {property.bathrooms}
+            </p>
 
-                    <div className="property-action-buttons">
+            <p>
+              <strong>Beds:</strong> {property.beds}
+            </p>
 
-                    <button className="view-property-btn">
-                        View
-                    </button>
+            <p>
+              <strong>Max Guests:</strong> {property.max_guests}
+            </p>
 
-                    <button className="edit-property-btn">
-                        Edit
-                    </button>
+            <p>
+              <strong>Added On:</strong>{" "}
+              {new Date(property.created_at).toLocaleDateString("en-GB")}
+            </p>
 
-                    <button className="delete-property-btn">
-                        Delete
-                    </button>
+            <div className="property-action-buttons">
 
-                    </div>
+              <button className="view-property-btn">
+                View
+              </button>
 
-                </div>
+              <button className="edit-property-btn">
+                Edit
+              </button>
 
-                </div>
-            </>
-            )}
+              <button className="delete-property-btn">
+                Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        ))
+
+      )}
+
+    </div>
+  </>
+)}
 
             {activeTab === "Show Bookings" && (
-            <>
-                <h2>Property Bookings</h2>
+  <>
+    <h2>Property Bookings</h2>
 
-                <div className="host-booking-card">
+    <div className="host-bookings-container">
 
-                <h3>The Leela Palace</h3>
+      {hostBookings.length === 0 ? (
 
-                <p>
-                    <strong>Booked By:</strong> Taresh Tandy
-                </p>
+        <div className="no-data">
+          <h3>No Bookings Found</h3>
+          <p>No one has booked your properties yet.</p>
+        </div>
 
-                <p>
-                    <strong>Email:</strong> taresh25202@gmail.com
-                </p>
+      ) : (
 
-                <p>
-                    <strong>Check In:</strong> 15 Aug 2026
-                </p>
+        hostBookings.map((booking) => (
 
-                <p>
-                    <strong>Check Out:</strong> 18 Aug 2026
-                </p>
+          <div
+            className="host-booking-card"
+            key={booking.id}
+          >
 
-                <p>
-                    <strong>Guests:</strong> 2
-                </p>
+            <h3>{booking.property_title}</h3>
 
-                <p>
-                    <strong>Total Amount:</strong> ₹75,000
-                </p>
+            <p>
+              <strong>Booked By:</strong> {booking.user_name}
+            </p>
 
-                <p>
-                    <strong>Status:</strong>
-                    <span className="confirmed-status">
-                    Confirmed
-                    </span>
-                </p>
+            <p>
+              <strong>Email:</strong> {booking.user_email}
+            </p>
 
-                <p>
-                    <strong>Booked On:</strong> 12 Jun 2026
-                </p>
+            <p>
+              <strong>Check In:</strong>{" "}
+              {new Date(booking.check_in).toLocaleDateString("en-GB")}
+            </p>
 
-                <button className="view-booking-btn">
-                    View Details
-                </button>
+            <p>
+              <strong>Check Out:</strong>{" "}
+              {new Date(booking.check_out).toLocaleDateString("en-GB")}
+            </p>
 
-                </div>
-            </>
-            )}
+            <p>
+              <strong>Guests:</strong> {booking.guests_count}
+            </p>
 
-            {activeTab === "Show Reviews" && (
-            <>
-                <h2>Property Reviews</h2>
+            <p>
+              <strong>Total Amount:</strong> ₹{booking.total_price}
+            </p>
 
-                <div className="host-review-card">
+            <p>
+              <strong>Status:</strong>{" "}
+              {booking.booking_status}
+            </p>
 
-                <h3>The Leela Palace</h3>
+            <p>
+              <strong>Booked On:</strong>{" "}
+              {new Date(booking.created_at).toLocaleDateString("en-GB")}
+            </p>
 
-                <p>
-                    <strong>Reviewed By:</strong> Taresh Tandy
-                </p>
+          </div>
 
-                <p>
-                    <strong>Rating:</strong> ⭐⭐⭐⭐⭐
-                </p>
+        ))
 
-                <p>
-                    <strong>Comment:</strong>
-                    Amazing stay with excellent service and facilities.
-                </p>
+      )}
 
-                <p>
-                    <strong>Reviewed On:</strong>
-                    25 Jun 2026
-                </p>
+    </div>
+  </>
+)}
 
-                </div>
-            </>
-            )}
+            {activeTab === "My Bookings" && (
+  <>
+    <h2>My Bookings</h2>
 
-            {activeTab === "Show Users" && (
-            <>
+    <div className="my-bookings-container">
+
+      {myBookings.length === 0 ? (
+
+        <div className="no-data">
+          <h3>No Bookings Yet</h3>
+          <p>You haven't booked any property yet.</p>
+        </div>
+
+      ) : (
+
+        myBookings.map((booking) => (
+
+          <div
+            className="host-booking-card"
+            key={booking.id}
+          >
+
+            <h3>{booking.property_title}</h3>
+
+            <p>
+              <strong>Location:</strong> {booking.property_location}
+            </p>
+
+            <p>
+              <strong>Property Type:</strong> {booking.property_type}
+            </p>
+
+            <p>
+              <strong>Check In:</strong>{" "}
+              {new Date(booking.check_in).toLocaleDateString("en-GB")}
+            </p>
+
+            <p>
+              <strong>Check Out:</strong>{" "}
+              {new Date(booking.check_out).toLocaleDateString("en-GB")}
+            </p>
+
+            <p>
+              <strong>Guests:</strong> {booking.guests_count}
+            </p>
+
+            <p>
+              <strong>Total Amount:</strong> ₹{booking.total_price}
+            </p>
+
+            <p>
+              <strong>Status:</strong> {booking.booking_status}
+            </p>
+
+            <p>
+              <strong>Booked On:</strong>{" "}
+              {new Date(booking.created_at).toLocaleDateString("en-GB")}
+            </p>
+
+          </div>
+
+        ))
+
+      )}
+
+    </div>
+  </>
+)}
+
+            {activeTab === "Wishlist" && (
+  <>
+    <h2>My Wishlist</h2>
+
+    <div className="wishlist-container">
+
+      {wishlist.length === 0 ? (
+
+        <div className="no-data">
+          <h3>No Wishlist Yet</h3>
+          <p>You haven't added any property to your wishlist.</p>
+        </div>
+
+      ) : (
+
+        wishlist.map((item) => (
+
+          <div
+            className="host-property-card"
+            key={item.id}
+          >
+
+            <h3>{item.property_title}</h3>
+
+            <p>
+              📍 {item.property_location}
+            </p>
+
+            <p>
+              <strong>Property Type:</strong> {item.property_type}
+            </p>
+
+            <p>
+              <strong>Price:</strong> ₹{item.property_price} / Night
+            </p>
+
+          </div>
+
+        ))
+
+      )}
+
+    </div>
+  </>
+)}
+
+           {activeTab === "Show Reviews" && (
+  <>
+    <h2>Property Reviews</h2>
+
+    <div className="host-reviews-container">
+
+      {hostReviews.length === 0 ? (
+
+        <div className="no-data">
+          <h3>No Reviews Yet</h3>
+          <p>No reviews have been received for your properties.</p>
+        </div>
+
+      ) : (
+
+        hostReviews.map((review) => (
+
+          <div
+            className="host-review-card"
+            key={review.id}
+          >
+
+            <h3>{review.property_title}</h3>
+
+            <p>
+              <strong>Reviewed By:</strong> {review.user_name}
+            </p>
+
+            <p>
+              <strong>Rating:</strong> ⭐ {review.rating}/5
+            </p>
+
+            <p>
+              <strong>Comment:</strong> {review.comment}
+            </p>
+
+            <p>
+              <strong>Reviewed On:</strong>{" "}
+              {new Date(review.created_at).toLocaleDateString("en-GB")}
+            </p>
+
+          </div>
+
+        ))
+
+      )}
+
+    </div>
+  </>
+)}
+
+                {
+                activeTab === "Show Users" && (
+
+                <div className="profile-section">
+
                 <h2>All Users</h2>
 
-                <div className="admin-user-card">
+                <table className="users-table">
 
-                <h3>Taresh Tandy</h3>
+                <thead>
+                <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Host Status</th>
+                </tr>
+                </thead>
 
-                <p>
-                    <strong>Username:</strong> taresh123
-                </p>
+                <tbody>
 
-                <p>
-                    <strong>Email:</strong> taresh25202@gmail.com
-                </p>
+                {users.length === 0 ? (
 
-                <p>
-                    <strong>Phone:</strong> +91 9876543210
-                </p>
+                <tr>
+                <td colSpan="5">No Users Found</td>
+                </tr>
 
-                <p>
-                    <strong>Role:</strong> User
-                </p>
+                ) : (
 
-                <p>
-                    <strong>Joined On:</strong> 12 Jun 2026
-                </p>
+                users.map((user) => (
 
-                <div className="admin-user-buttons">
-                    <button>View Profile</button>
+                <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.phone}</td>
+                <td>{user.role}</td>
+                <td>{user.host_status}</td>
+                </tr>
+
+                ))
+
+                )}
+
+                </tbody>
+
+                </table>
+
                 </div>
 
-                </div>
-            </>
-            )}
+                )}
 
             {activeTab === "Show Hosts" && (
             <>

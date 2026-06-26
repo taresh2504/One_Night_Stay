@@ -120,18 +120,20 @@ class LoginView(APIView):
         )
 
         return Response(
-            {
-                "message":
-                "Login successful.",
-
-                "refresh":
-                str(refresh),
-
-                "access":
-                str(refresh.access_token)
-            },
-            status=status.HTTP_200_OK
-        )    
+    {
+        "message": "Login successful.",
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "role": user.role,
+        "host_status": user.host_status,
+        "name": user.name,
+        "email": user.email,
+        "phone": user.phone,
+        "created_at": user.created_at,
+    },
+    status=status.HTTP_200_OK
+)
+    
 
 
 class PropertyListCreateView(generics.ListCreateAPIView):
@@ -401,6 +403,7 @@ class HostBookingListView(APIView):
             serializer.data,
             status=status.HTTP_200_OK
         )
+
 
 class ApproveBookingView(APIView):
 
@@ -715,9 +718,7 @@ class MyProfileView(APIView):
         )
 
 class MyPropertiesView(APIView):
-
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
 
         properties = Property.objects.filter(
@@ -733,6 +734,24 @@ class MyPropertiesView(APIView):
             serializer.data,
             status=status.HTTP_200_OK
         )
+
+# class MyPropertiesView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+
+#         print("USER =", request.user)
+#         print("AUTH =", request.auth)
+
+#         properties = Property.objects.filter(
+#             owner=request.user
+#         )
+
+#         serializer = PropertySerializer(properties, many=True)
+
+#         return Response(serializer.data)
+
+
 
 class MyBookingsView(APIView):
 

@@ -59,6 +59,66 @@ const Propertydetails = () => {
     <button>Book Now</button>
   </div>
 
+  {/* Customer Reviews */}
+
+<div className="property-reviews">
+
+  <h2>Customer Reviews</h2>
+
+  <div className="review-card">
+
+    <h3>Rahul Sharma</h3>
+
+    <p>
+      <strong>Rating:</strong> ⭐⭐⭐⭐⭐
+    </p>
+
+    <p>
+      Amazing stay with excellent service and beautiful rooms.
+    </p>
+
+    <p>
+      <strong>Reviewed On:</strong> 25 Jun 2026
+    </p>
+
+  </div>
+
+</div>
+
+{/* Write a Review */}
+
+<div className="write-review">
+
+  <h2>Write a Review</h2>
+
+  <form>
+
+    <label>Rating</label>
+
+    <select>
+      <option value="">Select Rating</option>
+      <option value="1">⭐ 1</option>
+      <option value="2">⭐⭐ 2</option>
+      <option value="3">⭐⭐⭐ 3</option>
+      <option value="4">⭐⭐⭐⭐ 4</option>
+      <option value="5">⭐⭐⭐⭐⭐ 5</option>
+    </select>
+
+    <label>Comment</label>
+
+    <textarea
+      rows="5"
+      placeholder="Write your review..."
+    ></textarea>
+
+    <button type="submit">
+      Submit Review
+    </button>
+
+  </form>
+
+</div>
+
 </div>
     </>
   )

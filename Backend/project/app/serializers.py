@@ -296,6 +296,16 @@ class BookingSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    user_name = serializers.CharField(
+        source="user.name",
+        read_only=True
+    )
+
+    user_email = serializers.EmailField(
+        source="user.email",
+        read_only=True
+    )
+
     class Meta:
 
         model = Booking
@@ -303,6 +313,8 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'user',
+            'user_name',
+            'user_email',
             'property',
             'property_title',
             'property_location',
@@ -390,6 +402,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    user_name = serializers.CharField(
+        source="user.name",
+        read_only=True
+    )
+
     property_location = serializers.CharField(
         source='property.location',
         read_only=True
@@ -402,6 +419,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'user',
+            "user_name",
             'property',
             'property_title',
             'property_location',
@@ -566,6 +584,10 @@ class UserSubscriptionSerializer(
 class PaymentSerializer(
     serializers.ModelSerializer
 ):
+    property_title = serializers.CharField(
+        source="booking.property.title",
+        read_only=True
+    )
 
     class Meta:
 

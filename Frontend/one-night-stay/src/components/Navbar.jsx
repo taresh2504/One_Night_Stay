@@ -6,7 +6,7 @@ import '../App.css'
 import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
-  const isLoggedIn = false;
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
   return (
     <>

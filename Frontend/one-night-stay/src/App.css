@@ -17,7 +17,7 @@ body{
   justify-content: center;
   align-items: center;
   gap: 380px;
-  background-color: grey;
+  background-color: lightgrey;
 }
 
 .navlogo{
@@ -88,11 +88,11 @@ body{
   border: 0.5px solid black;
   width: 100%;
   height: 170px;
-  background-color: grey;
+  background-color: lightgrey;
 }
 
 .footer{
-  border: 0.1px solid white;
+  border: 0.1px solid lightgrey;
   width: 100%;
   height: 120px;
   display: flex;
@@ -211,6 +211,18 @@ body{
   border-radius: 0 8px 8px 0;
 }
 
+.section-title{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:12px;
+    margin:30px 0;
+}
+
+.section-title svg{
+    font-size:28px;
+}
+
 /* Cardholder css begins */
 
 .cardholder{
@@ -306,6 +318,14 @@ body{
   opacity: 0.9;
 }
 
+/* Home page css */
+.home-hotels{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
 /* Register Page css */
 
 .register-container{
@@ -333,6 +353,13 @@ body{
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
+}
+
+.error{
+    color:red;
+    font-size:14px;
+    margin-top:5px;
+    margin-bottom:12px;
 }
 
 .register-box input{
@@ -956,6 +983,100 @@ body{
     transform: translateY(-3px);
 }
 
+/* ================= Reviews ================= */
+
+.property-reviews{
+    margin-top:40px;
+}
+
+.property-reviews h2{
+    margin-bottom:20px;
+    font-size:30px;
+}
+
+.review-card{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom:30px;
+}
+
+.review-card h3{
+    margin-bottom:10px;
+    color:#222;
+}
+
+.review-card p{
+    margin:10px 0;
+    color:#555;
+    line-height:1.6;
+}
+
+
+/* ================= Write Review ================= */
+
+.write-review{
+    margin-top:50px;
+    background:#fff;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.write-review h2{
+    margin-bottom:25px;
+    font-size:30px;
+}
+
+.write-review form{
+    display:flex;
+    flex-direction:column;
+}
+
+.write-review label{
+    font-weight:600;
+    margin-bottom:8px;
+    margin-top:18px;
+}
+
+.write-review select,
+.write-review textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+    outline:none;
+    transition:.3s;
+}
+
+.write-review select:focus,
+.write-review textarea:focus{
+    border-color:#0077ff;
+}
+
+.write-review textarea{
+    resize:vertical;
+    min-height:130px;
+}
+
+.write-review button{
+    margin-top:25px;
+    width:200px;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.write-review button:hover{
+    transform:translateY(-2px);
+}
+
 /* Booking css begin  */
 
 /* Booking Page */
@@ -1351,6 +1472,22 @@ body{
 
 .booking-card p{
     margin-bottom: 8px;
+}
+
+.no-data{
+    background: white;
+    padding:30px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.no-data h3{
+    margin-bottom:10px;
+}
+
+.no-data p{
+    color:#666;
 }
 
 .paid{

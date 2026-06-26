@@ -13,9 +13,9 @@ const Propertycard = () => {
           alt="property"
         />
 
-        <div className='wishlisticon'>
+        {/* <div className='wishlisticon'>
           ❤️
-        </div>
+        </div> */}
       </div>
 
       <div className='cardcontent'>
@@ -28,9 +28,9 @@ const Propertycard = () => {
           Mumbai, Maharashtra
         </div>
 
-        <div className='propertyrating'>
+        {/* <div className='propertyrating'>
           ⭐ 4.8
-        </div>
+        </div> */}
 
         <div className='wishlistcontainer'>
           <p className='propertyprice'>

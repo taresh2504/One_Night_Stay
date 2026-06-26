@@ -19,10 +19,13 @@ import Payment from './pages/Payment'
 import PaymentSuccess from './pages/PaymentSuccess'
 import UserProfile from './pages/UserProfile'
 import SubscriptionPlans from './pages/SubscriptionPlans'
+import Home from './pages/Home'
+import AppRoutes from "./routes/AppRoutes";
 
 const App = () => {
   return (
     <>
+      <AppRoutes />
       {/* <Navbar/>
       <Homesearch/>
       <br />
@@ -39,8 +42,9 @@ const App = () => {
       {/* <Booking/> */}
       {/* <Payment/> */}
       {/* <PaymentSuccess/> */}
-      <UserProfile/>
+      {/* <UserProfile/> */}
       {/* <SubscriptionPlans/> */}
+      {/* <Home/> */}
     </>
   )
 }
