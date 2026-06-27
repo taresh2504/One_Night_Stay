@@ -137,16 +137,90 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField() 
+
+
+class PropertyImageSerializer(serializers.ModelSerializer):
+
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PropertyImage
+
+        fields = [
+            'id',
+            'property',
+            'image',
+            'image_type',
+            'uploaded_at'
+        ]
+
+        read_only_fields = [
+            'id',
+            'uploaded_at'
+        ]
+
+    def get_image(self, obj):
+        return str(obj.image)
+
+    
+    def validate_image(self, value):
+
+        if not value:
+            raise serializers.ValidationError(
+                "Image is required."
+            )
+
+        
+        allowed_extensions = [
+            '.jpg',
+            '.jpeg',
+            '.png',
+            '.webp'
+        ]
+
+        file_name = value.name.lower()
+
+        if not any(
+            file_name.endswith(ext)
+            for ext in allowed_extensions
+        ):
+            raise serializers.ValidationError(
+                "Only JPG, JPEG, PNG, WEBP files allowed."
+            )
+
+        
+        max_size = 2 * 1024 * 1024
+
+        if value.size > max_size:
+            raise serializers.ValidationError(
+                "Image size must not exceed 2 MB."
+            )
+        
+
+        return value     
        
  
 class PropertySerializer(serializers.ModelSerializer):
 
+    host_name = serializers.CharField(
+        source="owner.name",
+        read_only=True
+    )
+
+
+    images = PropertyImageSerializer(
+    many=True,
+    read_only=True
+    )
+
     class Meta:
         model = Property
+        # fields = "__all__"
 
         fields = [
             'id',
             'owner',
+            'host_name',
             'title',
             'location',
             'price',
@@ -157,13 +231,15 @@ class PropertySerializer(serializers.ModelSerializer):
             'max_guests',
             'beds',
             'is_featured',
-            'created_at'
+            'created_at',
+            'images'
         ]
 
         read_only_fields = [
             'id',
             'created_at',
-            'owner'
+            'owner',
+            'host_name'
         ]
 
     
@@ -222,62 +298,7 @@ class PropertySerializer(serializers.ModelSerializer):
     #         })
 
     #     return data
-    
-
-class PropertyImageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = PropertyImage
-
-        fields = [
-            'id',
-            'property',
-            'image',
-            'image_type',
-            'uploaded_at'
-        ]
-
-        read_only_fields = [
-            'id',
-            'uploaded_at'
-        ]
-
-    
-    def validate_image(self, value):
-
-        if not value:
-            raise serializers.ValidationError(
-                "Image is required."
-            )
-
-        
-        allowed_extensions = [
-            '.jpg',
-            '.jpeg',
-            '.png',
-            '.webp'
-        ]
-
-        file_name = value.name.lower()
-
-        if not any(
-            file_name.endswith(ext)
-            for ext in allowed_extensions
-        ):
-            raise serializers.ValidationError(
-                "Only JPG, JPEG, PNG, WEBP files allowed."
-            )
-
-        
-        max_size = 2 * 1024 * 1024
-
-        if value.size > max_size:
-            raise serializers.ValidationError(
-                "Image size must not exceed 2 MB."
-            )
-        
-
-        return value    
+       
     
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -309,6 +330,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Booking
+        fields="__all__"
 
         fields = [
             'id',
@@ -412,9 +434,25 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    user_name = serializers.CharField(
+        source="user.name",
+        read_only=True
+    )
+
+    property_title = serializers.CharField(
+        source="property.title",
+        read_only=True
+    )
+
+    property_location = serializers.CharField(
+        source="property.location",
+        read_only=True
+    )
+
 
     class Meta:
         model = Review
+        fields="__all__"
 
         fields = [
             'id',
@@ -492,25 +530,44 @@ class SubscriptionPlanSerializer(
 class UserSubscriptionSerializer(
     serializers.ModelSerializer
 ):
+    user_name = serializers.CharField(
+        source="user.name",
+        read_only=True
+    )
+
+    user_email = serializers.CharField(
+        source="user.email",
+        read_only=True
+    )
+
+    plan_name = serializers.CharField(
+        source="plan.name",
+        read_only=True
+    )
 
     class Meta:
 
         model = UserSubscription
 
         fields = [
-            'id',
-            'user',
-            'plan',
-            'start_date',
-            'end_date',
-            'is_active'
+            "id",
+            "user",
+            "user_name",
+            "user_email",
+            "plan",
+            "plan_name",
+            "start_date",
+            "end_date",
+            "is_active",
+            "approval_status",
         ]
 
         read_only_fields = [
-            'id',
-            'start_date',
-            'user',
-            'end_date'
+            "id",
+            "user",
+            "start_date",
+            "end_date",
+            "approval_status",
         ]
 
     def validate_end_date(self, value):
@@ -584,14 +641,25 @@ class UserSubscriptionSerializer(
 class PaymentSerializer(
     serializers.ModelSerializer
 ):
+    user_name = serializers.CharField(
+        source="booking.user.name",
+        read_only=True
+    )
+
     property_title = serializers.CharField(
         source="booking.property.title",
+        read_only=True
+    )
+
+    property_location = serializers.CharField(
+        source="booking.property.location",
         read_only=True
     )
 
     class Meta:
 
         model = Payment
+        fields="__all__"
 
         fields = [
             'id',
@@ -619,6 +687,11 @@ class WishlistSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    property_type = serializers.CharField(
+    source="property.property_type",
+    read_only=True
+)
+
     property_location = serializers.CharField(
         source='property.location',
         read_only=True
@@ -639,6 +712,7 @@ class WishlistSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'property',
+            'property_type',
             'property_title',
             'property_location',
             'property_price',

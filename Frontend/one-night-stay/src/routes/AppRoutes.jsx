@@ -32,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/booking" element={<Booking />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/property/:id" element={<Propertydetails />} />
       </Route>
 
       {/* Pages without Navbar + Footer */}

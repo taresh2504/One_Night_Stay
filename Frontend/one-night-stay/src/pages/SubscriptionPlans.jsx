@@ -1,21 +1,49 @@
 import React from "react";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SubscriptionPlans = () => {
 
     const navigate = useNavigate();
 
-    const handleApply = (planId) => {
+    const handleApply = async (planId) => {
 
-    console.log("Selected Plan:", planId);
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/subscribe/",
+      {
+        plan: planId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     alert(
       "Plan request submitted successfully. Waiting for admin approval."
     );
 
+    console.log(response.data);
+
     navigate("/");
-  };
+
+  } catch (error) {
+
+    console.log("Status:", error.response?.status);
+    console.log("Data:", error.response?.data);
+    console.log(error);
+
+    alert(JSON.stringify(error.response?.data));
+
+  }
+
+}; 
   return (
     <div className="plans-container">
 

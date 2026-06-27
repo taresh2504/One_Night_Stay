@@ -194,7 +194,6 @@ class PropertyImageListCreateView(generics.ListCreateAPIView):
             raise PermissionDenied(
                 "Admin approval required."
             )
-
         
         if property_obj.owner != user:
             raise PermissionDenied(
@@ -221,10 +220,15 @@ class UserSubscriptionCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
 
+        user = self.request.user
+
+        user.host_status = "pending"
+        user.save()
+
         serializer.save(
-        user=self.request.user,
-        end_date=timezone.now() + timedelta(days=30)
-    )
+            user=user,
+            end_date=timezone.now() + timedelta(days=30)
+        )
         
 class UserSubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserSubscription.objects.all()
@@ -625,6 +629,10 @@ class PropertySearchView(APIView):
         max_price = request.query_params.get('max_price')
         property_type = request.query_params.get('property_type')
         featured = request.query_params.get('featured')
+        ordering = request.query_params.get("ordering")
+
+        if ordering:
+            properties = properties.order_by(ordering)
 
         if search:
 
@@ -825,4 +833,178 @@ class PropertyReviewsView(APIView):
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
-        )                           
+        )    
+
+class ShowHostsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response({"message": "Unauthorized"}, status=403)
+
+        hosts = User.objects.filter(role="host")
+
+        serializer = UserSerializer(hosts, many=True)
+
+        return Response(serializer.data)  
+
+class PendingHostsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response({"message": "Unauthorized"}, status=403)
+
+        pending_hosts = User.objects.filter(
+            role="host",
+            host_status="pending"
+        )
+
+        serializer = UserSerializer(pending_hosts, many=True)
+
+        return Response(serializer.data)   
+
+class ShowAllPropertiesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response(
+                {"message": "Unauthorized"},
+                status=403
+            )
+
+        properties = Property.objects.all().order_by("-created_at")
+
+        serializer = PropertySerializer(properties, many=True)
+
+        return Response(serializer.data)
+
+class ShowAllBookingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response(
+                {"message": "Unauthorized"},
+                status=403
+            )
+
+        bookings = Booking.objects.all().order_by("-created_at")
+
+        serializer = BookingSerializer(bookings, many=True)
+
+        return Response(serializer.data)
+
+class AllPaymentHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response(
+                {"message": "Unauthorized"},
+                status=403
+            )
+
+        payments = Payment.objects.all().order_by("-paid_at")
+
+        serializer = PaymentSerializer(payments, many=True)
+
+        return Response(serializer.data)  
+
+class ShowAllReviewsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        if request.user.role != "admin":
+            return Response(
+                {"message": "Unauthorized"},
+                status=403
+            )
+
+        reviews = Review.objects.all().order_by("-created_at")
+
+        serializer = ReviewSerializer(reviews, many=True)
+
+        return Response(serializer.data)  
+
+class ApproveSubscriptionView(generics.UpdateAPIView):
+
+    queryset = UserSubscription.objects.all()
+    serializer_class = UserSubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+
+        if request.user.role != "admin":
+            raise PermissionDenied(
+                "Only admin can approve subscriptions."
+            )
+
+        subscription = self.get_object()
+
+        subscription.approval_status = "approved"
+        subscription.save()
+
+        user = subscription.user
+        user.host_status = "approved"
+        user.role = "host"
+        user.save()
+
+        return Response(
+            {
+                "message": "Subscription approved successfully."
+            },
+            status=status.HTTP_200_OK
+        )
+
+class RejectSubscriptionView(generics.UpdateAPIView):
+
+    queryset = UserSubscription.objects.all()
+    serializer_class = UserSubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+
+        if request.user.role != "admin":
+            raise PermissionDenied(
+                "Only admin can reject subscriptions."
+            )
+
+        subscription = self.get_object()
+
+        subscription.approval_status = "rejected"
+        subscription.save()
+
+        user = subscription.user
+        user.host_status = "rejected"
+        user.save()
+
+        return Response(
+            {
+                "message": "Subscription rejected successfully."
+            },
+            status=status.HTTP_200_OK
+        )
+
+class PendingSubscriptionListView(generics.ListAPIView):
+
+    serializer_class = UserSubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        if self.request.user.role != "admin":
+            raise PermissionDenied(
+                "Only admin can view subscription requests."
+            )
+
+        return UserSubscription.objects.filter(
+            approval_status="pending"
+        )                                                      

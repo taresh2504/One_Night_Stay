@@ -56,6 +56,17 @@ urlpatterns = [
     path('my-bookings/', MyBookingsView.as_view(), name='my-bookings'),
     path('my-payments/', MyPaymentsView.as_view(), name='my-payments'),
     path('properties/<int:property_id>/reviews/', PropertyReviewsView.as_view(), name='property-reviews'),
+    path("hosts/", ShowHostsView.as_view()),
+    path("pending-hosts/", PendingHostsView.as_view()),
+    path("all-properties/", ShowAllPropertiesView.as_view()),
+    path("all-bookings/", ShowAllBookingsView.as_view()),
+    path("all-payments/", AllPaymentHistoryView.as_view()),
+    path("all-reviews/", ShowAllReviewsView.as_view()),
+    path("approve-subscription/<int:pk>/",ApproveSubscriptionView.as_view(),name="approve-subscription"),
+    path("reject-subscription/<int:pk>/",RejectSubscriptionView.as_view(),
+    name="reject-subscription"),
+    path("pending-subscriptions/",PendingSubscriptionListView.as_view(),
+    name="pending-subscriptions"),
 ]
 
 

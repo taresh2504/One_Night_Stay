@@ -1,35 +1,127 @@
-import React from 'react'
 import '../App.css'
 import logo from '../assets/One_Night_Stay_Logo.jpg'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Propertydetails = () => {
+
+  const { id } = useParams();
+
+  const [property, setProperty] = useState(null);
+
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const fetchProperty = async () => {
+
+    try {
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            `http://127.0.0.1:8000/properties/${id}/`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setProperty(response.data);
+
+        if (response.data.images.length > 0) {
+
+            setSelectedImage(
+                `https://res.cloudinary.com/dnjvp8b90/${response.data.images[0].image}`
+            );
+
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+};
+
+  useEffect(() => {
+
+    fetchProperty();
+
+}, []);
+
+    if (!property) {
+
+    return <h2>Loading...</h2>;
+
+}
+
+      const addToWishlist = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.post(
+      "http://127.0.0.1:8000/wishlist/",
+      {
+        property: property.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Property added to wishlist.");
+
+  } catch (error) {
+
+    console.log(error.response);
+
+    if (error.response?.data?.non_field_errors) {
+      alert(error.response.data.non_field_errors[0]);
+    } else {
+      alert("Unable to add property.");
+    }
+
+  }
+
+};
+
   return (
     <>
       <div className="details-container">
 
   <div className="image-gallery">
-    <img src={logo} className="main-image" />
+    <img src={`https://res.cloudinary.com/dnjvp8b90/${property.images?.[0]?.image}`}
+  alt={property.title} className="main-image" />
 
     <div className="gallery-row">
-      <img src={logo} />
-      <img src={logo} />
-      <img src={logo} />
-      <img src={logo} />
+
+      {property.images?.slice(1, 5).map((img) => (
+
+<img
+    key={img.id}
+    src={`https://res.cloudinary.com/dnjvp8b90/${img.image}`}
+    alt=""
+/>
+
+))}
+      
     </div>
   </div>
 
   <div className="property-info">
-    <h1>The Leela Palace</h1>
+    <h1>{property.title}</h1>
 
-    <h3>📍 New Delhi, India</h3>
+<h3>📍 {property.location}</h3>
 
-    <h2>₹25,000 / Night</h2>
+<h2>₹{property.price} / Night</h2>
 
-    <p>
-      Experience luxury and comfort at
-      The Leela Palace with world-class
-      amenities and exceptional hospitality.
-    </p>
+<p>{property.description}</p>
   </div>
 
   <div className="amenities">
@@ -48,14 +140,14 @@ const Propertydetails = () => {
   <div className="property-meta">
     <h2>Property Information</h2>
 
-    <p>Bedrooms : 4</p>
-    <p>Bathrooms : 3</p>
-    <p>Beds : 5</p>
-    <p>Guests : 8</p>
+    <p>Bedrooms : {property.bedrooms}</p>
+<p>Bathrooms : {property.bathrooms}</p>
+<p>Beds : {property.beds}</p>
+<p>Guests : {property.max_guests}</p>
   </div>
 
   <div className="action-buttons">
-    <button>Add to Wishlist</button>
+    <button onClick={addToWishlist}>Add to Wishlist</button>
     <button>Book Now</button>
   </div>
 

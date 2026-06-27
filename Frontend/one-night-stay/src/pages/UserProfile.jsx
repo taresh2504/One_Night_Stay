@@ -13,6 +13,7 @@ const UserProfile = () => {
     const hostStatus = localStorage.getItem("host_status");
     const createdAt = localStorage.getItem("created_at");// user | host | admin
     console.log(localStorage.getItem("access"));
+    
 
     const [activeTab, setActiveTab] = useState("My Profile");
     const [myProperties, setMyProperties] = useState([]);
@@ -22,6 +23,85 @@ const UserProfile = () => {
     const [hostReviews, setHostReviews] = useState([]);
     const [payments, setPayments] = useState([]);
     const [users, setUsers] = useState([]);
+    const [hosts, setHosts] = useState([]);
+    const [pendingSubscriptions, setPendingSubscriptions] = useState([]);
+    const [allProperties, setAllProperties] = useState([]);
+    const [allBookings, setAllBookings] = useState([]);
+    const [allPayments, setAllPayments] = useState([]);
+    const [allReviews, setAllReviews] = useState([]);
+    const [propertyData, setPropertyData] = useState({
+            title: "",
+            location: "",
+            price: "",
+            bedrooms: "",
+            bathrooms: "",
+            description: "",
+            property_type: "",
+            max_guests: "",
+            beds: "",
+            is_featured: false,
+          });
+
+  const handleChange = (e) => {
+  setPropertyData({
+    ...propertyData,
+    [e.target.name]: e.target.value
+  });
+};        
+
+  const [imageData, setImageData] = useState({
+    property: "",
+    image: null,
+    image_type: ""
+});
+
+  const handleImageChange = (e) => {
+  const { name, value, files } = e.target;
+
+  setImageData({
+    ...imageData,
+    [name]: files ? files[0] : value,
+  });
+};
+
+  const handleUploadImage = async (e) => {
+  e.preventDefault();
+
+  try {
+    const token = localStorage.getItem("access");
+
+    const formData = new FormData();
+
+    formData.append("property", imageData.property);
+    formData.append("image", imageData.image);
+    formData.append("image_type", imageData.image_type);
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/property-images/",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    alert("Image uploaded successfully");
+
+    console.log(response.data);
+
+    setImageData({
+      property: "",
+      image: null,
+      image_type: "",
+    });
+
+  } catch (error) {
+    console.log(error.response?.data);
+    console.log(error.response?.status);
+  }
+};
 
   const userMenu = [
     "My Profile",
@@ -87,6 +167,14 @@ const UserProfile = () => {
 
     if(role === "admin"){
         fetchUsers();
+        fetchHosts();
+        fetchPendingHosts();
+        fetchAllProperties();
+        fetchAllBookings();
+        fetchAllPayments();
+        fetchAllReviews();
+        fetchPendingSubscriptions();
+        
     }
 
     }, []);
@@ -163,13 +251,15 @@ const UserProfile = () => {
     const token = localStorage.getItem("access");
 
     const response = await axios.get(
-      "http://127.0.0.1:8000/my-wishlist/",
+      "http://127.0.0.1:8000/wishlist/",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
+
+    console.log(response.data);
 
     setWishlist(response.data);
 
@@ -246,6 +336,283 @@ const UserProfile = () => {
   } catch (error) {
     console.log(error.response);
   }
+};
+
+    const fetchHosts = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/hosts/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setHosts(response.data);
+
+  } catch (error) {
+    console.log(error.response);
+  }
+
+};
+
+    const fetchPendingHosts = async () => {
+
+    try{
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            "http://127.0.0.1:8000/pending-hosts/",
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        setPendingHosts(response.data);
+
+    }
+
+    catch(error){
+        console.log(error.response);
+    }
+
+}
+
+    const fetchAllProperties = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/all-properties/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setAllProperties(response.data);
+
+  } catch (error) {
+    console.log(error.response);
+  }
+
+};
+
+    const fetchAllBookings = async () => {
+
+    try {
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            "http://127.0.0.1:8000/all-bookings/",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setAllBookings(response.data);
+
+    } catch (error) {
+        console.log(error.response);
+    }
+
+};
+
+    const fetchAllPayments = async () => {
+
+    try {
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            "http://127.0.0.1:8000/all-payments/",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setAllPayments(response.data);
+
+    } catch (error) {
+        console.log(error.response);
+    }
+
+};
+
+      const fetchAllReviews = async () => {
+
+    try {
+
+        const token = localStorage.getItem("access");
+
+        const response = await axios.get(
+            "http://127.0.0.1:8000/all-reviews/",
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        setAllReviews(response.data);
+
+    }
+
+    catch(error){
+        console.log(error.response);
+    }
+
+};
+
+    const handleAddProperty = async (e) => {
+  e.preventDefault();
+
+  if (
+    propertyData.price <= 0 ||
+    propertyData.bedrooms <= 0 ||
+    propertyData.bathrooms <= 0 ||
+    propertyData.beds <= 0 ||
+    propertyData.max_guests <= 0
+  ) {
+    alert("All numeric values must be greater than 0.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("access");
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/properties/",
+      propertyData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Property Added Successfully");
+
+    console.log(response.data);
+
+    fetchMyProperties(); // list refresh
+
+    setPropertyData({
+      title: "",
+      location: "",
+      price: "",
+      bedrooms: "",
+      bathrooms: "",
+      description: "",
+      property_type: "",
+      max_guests: "",
+      beds: ""
+    });
+
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+
+      const fetchPendingSubscriptions = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/pending-subscriptions/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setPendingSubscriptions(response.data);
+
+  } catch (error) {
+
+    console.log(error.response);
+
+  }
+
+};
+
+      const handleApprove = async (id) => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.put(
+      `http://127.0.0.1:8000/approve-subscription/${id}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Subscription Approved Successfully");
+
+    fetchPendingSubscriptions();
+
+  } catch (error) {
+
+    console.log(error.response);
+
+    alert("Unable to approve subscription.");
+
+  }
+
+};
+
+      const handleReject = async (id) => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.put(
+      `http://127.0.0.1:8000/reject-subscription/${id}/`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Subscription Rejected");
+
+    fetchPendingSubscriptions();
+
+  } catch (error) {
+
+    console.log(error.response);
+
+    alert("Unable to reject subscription.");
+
+  }
+
 };
 
   return (
@@ -419,20 +786,27 @@ key={payment.id}
             <>
                 <h2>Add Property</h2>
 
-                <form className="add-property-form">
+                <form className="add-property-form" onSubmit={handleAddProperty}>
 
                 <label>Property Title</label>
-                <input type="text" placeholder="Enter property title" />
+                <input type="text" placeholder="Enter property title" name="title"
+  value={propertyData.title}
+  onChange={handleChange} required/>
 
                 <label>Location</label>
-                <input type="text" placeholder="Enter location" />
+                <input type="text" placeholder="Enter location" name="location"
+  value={propertyData.location}
+  onChange={handleChange} required/>
 
                 <label>Price Per Night</label>
-                <input type="number" placeholder="Enter price" />
+                <input type="number" placeholder="Enter price" name="price"
+  value={propertyData.price}
+  onChange={handleChange} min="1" required/>
 
                 <label>Property Type</label>
-                <select>
-                    <option value="">Select Property Type</option>
+                <select value={propertyData.property_type}
+  onChange={handleChange} required name="property_type">
+                    <option value="" disabled>Select Property Type</option>
                     <option value="room">Room</option>
                     <option value="flat">Flat</option>
                     <option value="hotel">Hotel</option>
@@ -441,21 +815,27 @@ key={payment.id}
                 </select>
 
                 <label>Bedrooms</label>
-                <input type="number" placeholder="Enter bedrooms" />
+                <input type="number" name='bedrooms' placeholder="Enter bedrooms"  value={propertyData.bedrooms}
+  onChange={handleChange} min="1" required/>
 
                 <label>Bathrooms</label>
-                <input type="number" placeholder="Enter bathrooms" />
+                <input type="number" name='bathrooms' placeholder="Enter bathrooms"  value={propertyData.bathrooms}
+  onChange={handleChange} min="1" required/>
 
                 <label>Beds</label>
-                <input type="number" placeholder="Enter beds" />
+                <input type="number" name='beds' placeholder="Enter beds"  value={propertyData.beds}
+  onChange={handleChange} min="1" required/>
 
                 <label>Max Guests</label>
-                <input type="number" placeholder="Enter max guests" />
+                <input type="number" name='max_guests' placeholder="Enter max guests"  value={propertyData.max_guests}
+  onChange={handleChange} min="1" required/>
 
                 <label>Description</label>
                 <textarea
-                    rows="5"
+                    rows="5" name='description'
                     placeholder="Enter property description"
+                     value={propertyData.description}
+  onChange={handleChange} required
                 ></textarea>
 
                 {/* <div className="featured-box">
@@ -472,65 +852,89 @@ key={payment.id}
             )}
 
             {activeTab === "Add Property Images" && (
-            <>
-                <h2>Add Property Images</h2>
+  <>
+    <h2>Add Property Images</h2>
 
-                <form className="property-image-form">
+    <form
+      className="property-image-form"
+      onSubmit={handleUploadImage}
+    >
 
-                <label>Select Property</label>
-                <select>
-                    <option value="">
-                    Select Property
-                    </option>
-                    <option value="1">
-                    The Leela Palace
-                    </option>
-                    <option value="2">
-                    Rambagh Palace
-                    </option>
-                </select>
+      <label>Select Property</label>
 
-                <label>Upload Image</label>
-                <input type="file" />
+      <select
+        name="property"
+        value={imageData.property}
+        onChange={handleImageChange}
+        required
+      >
+        <option value="">
+          Select Property
+        </option>
 
-                <label>Image Type</label>
-                <select>
-                    <option value="">
-                    Select Image Type
-                    </option>
+        {myProperties.map((property) => (
+          <option
+            key={property.id}
+            value={property.id}
+          >
+            {property.title}
+          </option>
+        ))}
+      </select>
 
-                    <option value="hall">
-                    Hall
-                    </option>
+      <label>Upload Image</label>
 
-                    <option value="bedroom">
-                    Bedroom
-                    </option>
+      <input
+        type="file"
+        name="image"
+        onChange={handleImageChange}
+        required
+      />
 
-                    <option value="bathroom">
-                    Bathroom
-                    </option>
+      <label>Image Type</label>
 
-                    <option value="washroom">
-                    Washroom
-                    </option>
+      <select
+        name="image_type"
+        value={imageData.image_type}
+        onChange={handleImageChange}
+        required
+      >
+        <option value="">
+          Select Image Type
+        </option>
 
-                    <option value="kitchen">
-                    Kitchen
-                    </option>
+        <option value="hall">
+          Hall
+        </option>
 
-                    <option value="exterior">
-                    Exterior
-                    </option>
-                </select>
+        <option value="bedroom">
+          Bedroom
+        </option>
 
-                <button type="submit">
-                    Upload Image
-                </button>
+        <option value="bathroom">
+          Bathroom
+        </option>
 
-                </form>
-            </>
-            )}
+        <option value="washroom">
+          Washroom
+        </option>
+
+        <option value="kitchen">
+          Kitchen
+        </option>
+
+        <option value="exterior">
+          Exterior
+        </option>
+      </select>
+
+      <button type="submit">
+        Upload Image
+      </button>
+
+    </form>
+  </>
+)}
 
             {activeTab === "Show Properties" && (
   <>
@@ -897,303 +1301,442 @@ key={payment.id}
 
                 )}
 
-            {activeTab === "Show Hosts" && (
-            <>
-                <h2>All Hosts</h2>
+            {
+activeTab === "Show Hosts" && (
 
-                <div className="admin-host-card">
+<div className="profile-section">
 
-                <h3>Rahul Sharma</h3>
+<h2>All Hosts</h2>
 
-                <p>
-                    <strong>Username:</strong> rahulhost
-                </p>
+<table className="users-table">
 
-                <p>
-                    <strong>Email:</strong> rahul@gmail.com
-                </p>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Role</th>
+<th>Host Status</th>
+</tr>
+</thead>
 
-                <p>
-                    <strong>Phone:</strong> +91 9876543210
-                </p>
+<tbody>
 
-                <p>
-                    <strong>Role:</strong> Host
-                </p>
+{hosts.length === 0 ? (
 
-                <p>
-                    <strong>Host Status:</strong>
-                    <span className="approved-host">
-                    Approved
-                    </span>
-                </p>
+<tr>
+<td colSpan="5">No Hosts Found</td>
+</tr>
 
-                <p>
-                    <strong>Joined On:</strong>
-                    12 Jun 2026
-                </p>
+) : (
 
-                <button className="view-host-btn">
-                    View Profile
-                </button>
+hosts.map((host) => (
 
-                </div>
-            </>
-            )}
+<tr key={host.id}>
+<td>{host.name}</td>
+<td>{host.email}</td>
+<td>{host.phone}</td>
+<td>{host.role}</td>
+<td>{host.host_status}</td>
+</tr>
 
-            {activeTab === "Subscription Approval" && (
-            <>
-                <h2>Host Approval Requests</h2>
+))
 
-                <div className="host-approval-card">
+)}
 
-                <h3>Rahul Sharma</h3>
+</tbody>
 
-                <p>
-                    <strong>Email:</strong> rahul@gmail.com
-                </p>
+</table>
 
-                <p>
-                    <strong>Phone:</strong> +91 9876543210
-                </p>
+</div>
 
-                <p>
-                    <strong>Role:</strong> Host
-                </p>
+)
+}
 
-                <p>
-                    <strong>Status:</strong>
-                    <span className="pending-host">
-                    Pending
-                    </span>
-                </p>
+{
+activeTab === "Subscription Approval" && (
 
-                <p>
-                    <strong>Applied On:</strong>
-                    25 Jun 2026
-                </p>
+<div className="profile-section">
 
-                <div className="approval-buttons">
+<h2>Pending Subscription Requests</h2>
 
-                    <button className="approve-btn">
-                    Approve
-                    </button>
+<table className="users-table">
 
-                    <button className="reject-btn">
-                    Reject
-                    </button>
+<thead>
 
-                </div>
+<tr>
 
-                </div>
-            </>
-            )}
+<th>Name</th>
+<th>Email</th>
+<th>Plan</th>
+<th>Status</th>
+<th>Action</th>
 
-            {activeTab === "Show All Properties" && (
-            <>
-                <h2>All Properties</h2>
+</tr>
 
-                <div className="admin-property-card">
+</thead>
 
-                <h3>The Leela Palace</h3>
+<tbody>
 
-                <p>
-                    <strong>Host:</strong> Rahul Sharma
-                </p>
-
-                <p>
-                    <strong>Location:</strong> New Delhi, India
-                </p>
+{
+pendingSubscriptions.length === 0 ?
 
-                <p>
-                    <strong>Property Type:</strong> Hotel
-                </p>
+<tr>
 
-                <p>
-                    <strong>Price:</strong> ₹25,000 / Night
-                </p>
+<td colSpan="5">
+No Pending Requests
+</td>
 
-                <p>
-                    <strong>Bedrooms:</strong> 80
-                </p>
+</tr>
 
-                <p>
-                    <strong>Bathrooms:</strong> 80
-                </p>
-
-                <p>
-                    <strong>Beds:</strong> 120
-                </p>
-
-                <p>
-                    <strong>Max Guests:</strong> 200
-                </p>
-
-                <p>
-                    <strong>Added On:</strong> 12 Jun 2026
-                </p>
-
-                <div className="admin-property-buttons">
-
-                    <button className="view-property-btn">
-                    View
-                    </button>
-
-                </div>
-
-                </div>
-            </>
-            )}
-
-            {activeTab === "Show All Bookings" && (
-            <>
-                <h2>All Bookings</h2>
-
-                <div className="admin-booking-card">
-
-                <h3>The Leela Palace</h3>
-
-                <p>
-                    <strong>Booked By:</strong>
-                    Taresh Tandy
-                </p>
-
-                <p>
-                    <strong>Check In:</strong>
-                    15 Aug 2026
-                </p>
-
-                <p>
-                    <strong>Check Out:</strong>
-                    18 Aug 2026
-                </p>
-
-                <p>
-                    <strong>Guests:</strong>
-                    2
-                </p>
-
-                <p>
-                    <strong>Total Price:</strong>
-                    ₹75,000
-                </p>
-
-                <p>
-                    <strong>Booking Status:</strong>
-                    <span className="confirmed-status">
-                    Confirmed
-                    </span>
-                </p>
-
-                <p>
-                    <strong>Booked On:</strong>
-                    12 Jun 2026
-                </p>
-
-                <button className="view-booking-btn">
-                    View Details
-                </button>
-
-                </div>
-            </>
-            )}
-
-            {activeTab === "All Payment History" && (
-                <>
-                    <h2>All Payment History</h2>
-
-                    <div className="admin-payment-card">
-
-                    <h3>The Leela Palace</h3>
-
-                    <p>
-                        <strong>User:</strong>
-                        Taresh Tandy
-                    </p>
-
-                    <p>
-                        <strong>Booking ID:</strong>
-                        #12
-                    </p>
-
-                    <p>
-                        <strong>Amount:</strong>
-                        ₹25,000
-                    </p>
-
-                    <p>
-                        <strong>Payment Status:</strong>
-                        <span className="success-status">
-                        Success
-                        </span>
-                    </p>
-
-                    <p>
-                        <strong>Razorpay Order ID:</strong>
-                        order_SaB8HbfiRFL3Os
-                    </p>
-
-                    <p>
-                        <strong>Razorpay Payment ID:</strong>
-                        pay_SaB8HbfiRFL3Os
-                    </p>
-
-                    <p>
-                        <strong>Paid On:</strong>
-                        25 Jun 2026
-                    </p>
-
-                    <button className="view-payment-btn">
-                        View Booking
-                    </button>
-
-                    </div>
-                </>
-                )}
-
-                {activeTab === "Show All Reviews" && (
-            <>
-                <h2>All Reviews</h2>
-
-                <div className="admin-review-card">
-
-                <h3>The Leela Palace</h3>
-
-                <p>
-                    <strong>Reviewed By:</strong>
-                    Taresh Tandy
-                </p>
-
-                <p>
-                    <strong>Rating:</strong>
-                    ⭐⭐⭐⭐⭐
-                </p>
-
-                <p>
-                    <strong>Comment:</strong>
-                    Amazing stay with excellent service and facilities.
-                </p>
-
-                <p>
-                    <strong>Reviewed On:</strong>
-                    25 Jun 2026
-                </p>
-
-                <div className="admin-review-buttons">
-
-                    <button className="view-review-btn">
-                    View Property
-                    </button>
-
-                    <button className="delete-review-btn">
-                    Delete Review
-                    </button>
-
-                </div>
-
-                </div>
-            </>
-            )}
+:
+
+pendingSubscriptions.map((subscription) => (
+
+<tr key={subscription.id}>
+
+<td>{subscription.user_name}</td>
+
+<td>{subscription.user_email}</td>
+
+<td>{subscription.plan_name}</td>
+
+<td>{subscription.approval_status}</td>
+
+<td>
+
+<button
+className="approve-btn"
+onClick={() => handleApprove(subscription.id)}
+>
+Approve
+</button>
+
+<button
+className="reject-btn"
+onClick={() => handleReject(subscription.id)}
+>
+Reject
+</button>
+
+</td>
+
+</tr>
+
+))
+
+}
+
+</tbody>
+
+</table>
+
+</div>
+
+)
+}
+
+            {
+            activeTab === "Show All Properties" && (
+
+            <div className="host-properties-container">
+
+            {
+            allProperties.length === 0 ?
+
+            <div className="no-data">
+
+            <h3>No Properties Found</h3>
+
+            </div>
+
+            :
+
+            allProperties.map((property) => (
+
+            <div
+            className="host-property-card"
+            key={property.id}
+            >
+
+            <h3>{property.title}</h3>
+
+            <p>
+            📍 {property.location}
+            </p>
+
+            <p>
+            <strong>Property Type:</strong>
+            {" "}
+            {property.property_type}
+            </p>
+
+            <p>
+            <strong>Price:</strong>
+            ₹{property.price}
+            </p>
+
+            <p>
+            <strong>Bedrooms:</strong>
+            {" "}
+            {property.bedrooms}
+            </p>
+
+            <p>
+            <strong>Bathrooms:</strong>
+            {" "}
+            {property.bathrooms}
+            </p>
+
+            <p>
+            <strong>Beds:</strong>
+            {" "}
+            {property.beds}
+            </p>
+
+            <p>
+            <strong>Max Guests:</strong>
+            {" "}
+            {property.max_guests}
+            </p>
+
+            <p>
+            <strong>Host:</strong>
+            {" "}
+            {property.host_name}
+            </p>
+
+            <p>
+            <strong>Added On:</strong>
+            {" "}
+            {new Date(property.created_at).toLocaleDateString("en-GB")}
+            </p>
+
+            <div className="property-action-buttons">
+
+            <button className="view-property-btn">
+            View
+            </button>
+
+            <button className="delete-property-btn">
+            Delete
+            </button>
+
+            </div>
+
+            </div>
+
+            ))
+
+            }
+
+</div>
+
+)
+}
+
+            {
+activeTab === "Show All Bookings" && (
+
+<div className="host-bookings-container">
+
+{
+allBookings.length === 0 ?
+
+<div className="no-data">
+
+<h3>No Bookings Found</h3>
+
+</div>
+
+:
+
+allBookings.map((booking) => (
+
+<div
+className="host-booking-card"
+key={booking.id}
+>
+
+<h3>{booking.property_title}</h3>
+
+<p>
+<strong>Booked By:</strong> {booking.user_name}
+</p>
+
+<p>
+<strong>Check In:</strong>{" "}
+{new Date(booking.check_in).toLocaleDateString("en-GB")}
+</p>
+
+<p>
+<strong>Check Out:</strong>{" "}
+{new Date(booking.check_out).toLocaleDateString("en-GB")}
+</p>
+
+<p>
+<strong>Guests:</strong> {booking.guests_count}
+</p>
+
+<p>
+<strong>Total Amount:</strong> ₹{booking.total_price}
+</p>
+
+<p>
+<strong>Status:</strong> {booking.booking_status}
+</p>
+
+<p>
+<strong>Booked On:</strong>{" "}
+{new Date(booking.created_at).toLocaleDateString("en-GB")}
+</p>
+
+</div>
+
+))
+
+}
+
+</div>
+
+)
+}
+
+            {
+activeTab === "All Payment History" && (
+
+<>
+<h2>All Payment History</h2>
+
+<div className="payment-container">
+
+{
+allPayments.length === 0 ?
+
+<div className="no-data">
+
+<h3>No Payment History Found</h3>
+
+</div>
+
+:
+
+allPayments.map((payment) => (
+
+<div
+className="admin-payment-card"
+key={payment.id}
+>
+
+<h3>{payment.property_title}</h3>
+
+<p>
+<strong>User:</strong> {payment.user_name}
+</p>
+
+<p>
+<strong>Location:</strong> {payment.property_location}
+</p>
+
+<p>
+<strong>Amount:</strong> ₹{payment.amount}
+</p>
+
+<p>
+<strong>Status:</strong> {payment.payment_status}
+</p>
+
+<p>
+<strong>Order ID:</strong> {payment.razorpay_order_id}
+</p>
+
+<p>
+<strong>Payment ID:</strong> {payment.razorpay_payment_id || "-"}
+</p>
+
+<p>
+<strong>Paid On:</strong>{" "}
+{
+payment.paid_at
+? new Date(payment.paid_at).toLocaleDateString("en-GB")
+: "-"
+}
+</p>
+
+</div>
+
+))
+
+}
+
+</div>
+
+</>
+
+)
+}
+
+                {
+activeTab === "Show All Reviews" && (
+
+<>
+<h2>All Reviews</h2>
+
+<div className="host-reviews-container">
+
+{
+allReviews.length === 0 ?
+
+<div className="no-data">
+
+<h3>No Reviews Found</h3>
+
+</div>
+
+:
+
+allReviews.map((review)=>(
+
+<div
+className="host-review-card"
+key={review.id}
+>
+
+<h3>{review.property_title}</h3>
+
+<p>
+<strong>Location:</strong> {review.property_location}
+</p>
+
+<p>
+<strong>Reviewed By:</strong> {review.user_name}
+</p>
+
+<p>
+<strong>Rating:</strong> ⭐ {review.rating}/5
+</p>
+
+<p>
+<strong>Comment:</strong> {review.comment}
+</p>
+
+<p>
+<strong>Reviewed On:</strong>{" "}
+{new Date(review.created_at).toLocaleDateString("en-GB")}
+</p>
+
+</div>
+
+))
+
+}
+
+</div>
+
+</>
+
+)
+}
         </div>
 
       </div>

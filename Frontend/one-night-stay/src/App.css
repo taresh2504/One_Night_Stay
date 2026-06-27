@@ -1643,6 +1643,12 @@ body{
     resize: vertical;
 }
 
+.add-property-form textarea{
+    resize: none;
+    min-height: 120px;
+    max-height: 120px;
+}
+
 .featured-box{
     display: flex;
     align-items: center;
@@ -1966,6 +1972,96 @@ body{
     border-radius: 6px;
     cursor: pointer;
 }
+
+/* ===========================
+   SHOW USERS
+=========================== */
+
+.profile-section{
+    width:100%;
+}
+
+.profile-section h2{
+    margin-bottom:20px;
+    color:#222;
+    font-size:28px;
+    font-weight:600;
+}
+
+.users-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.users-table thead{
+    background:#2f80ed;
+}
+
+.users-table thead th{
+    color:#fff;
+    padding:18px;
+    text-align:left;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.5px;
+}
+
+.users-table tbody td{
+    padding:16px 18px;
+    border-bottom:1px solid #ececec;
+    font-size:15px;
+    color:#444;
+}
+
+.users-table tbody tr:nth-child(even){
+    background:#fafafa;
+}
+
+.users-table tbody tr:hover{
+    background:#f2f7ff;
+    transition:.3s;
+}
+
+.users-table tbody tr:last-child td{
+    border-bottom:none;
+}
+
+/* Role */
+
+.users-table td:nth-child(4){
+    font-weight:600;
+    text-transform:capitalize;
+}
+
+/* Host Status */
+
+.users-table td:nth-child(5){
+    font-weight:600;
+    text-transform:capitalize;
+}
+
+.users-table td[colspan]{
+    text-align:center;
+    padding:35px;
+    color:#777;
+    font-size:16px;
+}
+
+/* Responsive */
+
+/* @media(max-width:768px){
+
+.users-table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+} */
 
 /* Subscriptionplan css */
 .plans-container{

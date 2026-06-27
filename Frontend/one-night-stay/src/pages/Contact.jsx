@@ -11,10 +11,10 @@ const Contact = () => {
 
         <div className="contact-info">
           <h3>📧 Email</h3>
-          <p>support@onenightstay.com</p>
+          <p>taresh430@gmail.com</p>
 
           <h3>📞 Phone</h3>
-          <p>+91 98765 43210</p>
+          <p>+91 7400962298</p>
 
           <h3>📍 Address</h3>
           <p>Bhopal, Madhya Pradesh, India</p>
@@ -28,17 +28,17 @@ const Contact = () => {
           <div className="social-links">
             <p>
               <FaFacebook className="social-icon" />
-              @OneNightStay
+              @One_Night_Stay
             </p>
 
             <p>
               <FaInstagram className="social-icon" />
-              @OneNightStay
+              @One_Night_Stay
             </p>
 
             <p>
               <FaXTwitter className="social-icon" />
-              @OneNightStay
+              @One_Night_Stay
             </p>
           </div>
         </div>
