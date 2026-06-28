@@ -1,51 +1,75 @@
-import React from 'react'
-import '../App.css'
-import logo from '../assets/One_Night_Stay_Logo.jpg'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "../App.css";
+import logo from "../assets/One_Night_Stay_Logo.jpg";
 
-const Propertycard = () => {
+const Propertycard = ({ property }) => {
+
+  const navigate = useNavigate();
+
+  const imageUrl =
+  property.images?.length > 0
+    ? property.images[0].image.startsWith("http")
+      ? property.images[0].image
+      : `http://127.0.0.1:8000/media/${property.images[0].image}`
+    : logo;
+
+  console.log(property.images);
+  console.log(property.images[0]);
+  console.log(imageUrl);    
+
   return (
-    <div className='cardholder'>
 
-      <div className='imagecontainer'>
+    <div
+      className="cardholder"
+      onClick={() => navigate(`/property/${property.id}`)}
+      style={{ cursor: "pointer" }}
+    >
+
+      <div className="imagecontainer">
+
         <img
-          src={logo}
-          className='propertyimage'
-          alt="property"
+          src={imageUrl}
+          alt={property.title}
+          className="propertyimage"
         />
 
-        {/* <div className='wishlisticon'>
-          ❤️
-        </div> */}
       </div>
 
-      <div className='cardcontent'>
+      <div className="cardcontent">
 
-        <div className='propertyname'>
-          Taj Hotel Mumbai
+        <div className="propertyname">
+          {property.title}
         </div>
 
-        <div className='propertylocation'>
-          Mumbai, Maharashtra
+        <div className="propertylocation">
+          {property.location}
         </div>
 
-        {/* <div className='propertyrating'>
-          ⭐ 4.8
-        </div> */}
+        <div className="wishlistcontainer">
 
-        <div className='wishlistcontainer'>
-          <p className='propertyprice'>
-            ₹25,000 <span>/ Night</span>
+          <p className="propertyprice">
+            ₹{property.price}
+            <span> / Night</span>
           </p>
 
-          <button className='wishlistbutton'>
+          {/* <button
+            className="wishlistbutton"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             Wishlist
-          </button>
+          </button> */}
+
         </div>
 
       </div>
 
     </div>
-  )
-}
 
-export default Propertycard
+  );
+
+};
+
+export default Propertycard;

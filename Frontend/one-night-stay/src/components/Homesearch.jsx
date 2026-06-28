@@ -2,7 +2,11 @@ import React from 'react'
 import '../App.css'
 import hotelinterior from '../assets/hotelinterior.mp4'
 
-const Homesearch = () => {
+const Homesearch = ({
+  search,
+  setSearch,
+  handleSearch,
+}) => {
   return (
     <>
       <div className='srchhomeholder'>
@@ -14,9 +18,14 @@ const Homesearch = () => {
           <h1>Find Your Perfect Stay</h1>
 
           <div className='searchbar'>
-            <input type="search" placeholder='Search Hotels, Resorts, Rooms...'/>
+            <input
+  type="search"
+  placeholder="Search Hotels, Resorts..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
 
-            <button type="submit">Search</button>
+            <button type="submit" onClick={handleSearch}>Search</button>
           </div>
         </div>
 

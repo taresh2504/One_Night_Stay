@@ -20,7 +20,6 @@ const UserProfile = () => {
     const [myBookings, setMyBookings] = useState([]);
     const [hostBookings, setHostBookings] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    const [hostReviews, setHostReviews] = useState([]);
     const [payments, setPayments] = useState([]);
     const [users, setUsers] = useState([]);
     const [hosts, setHosts] = useState([]);
@@ -28,7 +27,10 @@ const UserProfile = () => {
     const [allProperties, setAllProperties] = useState([]);
     const [allBookings, setAllBookings] = useState([]);
     const [allPayments, setAllPayments] = useState([]);
+    const [hostPayments, setHostPayments] = useState([]);
     const [allReviews, setAllReviews] = useState([]);
+    const [myReviews, setMyReviews] = useState([]);
+    const [propertyReviews, setPropertyReviews] = useState([]);
     const [propertyData, setPropertyData] = useState({
             title: "",
             location: "",
@@ -107,7 +109,7 @@ const UserProfile = () => {
     "My Profile",
     "My Bookings",
     "Wishlist",
-    "Payment History",
+    "My Payments",
     "My Reviews",
     "Become a Host",
     "Logout"
@@ -121,8 +123,9 @@ const UserProfile = () => {
     "Show Bookings",
     "My Bookings",
     "Wishlist",
-    "Show Reviews",
-    "Payment History",
+    "My Reviews",
+    "Property Reviews",
+    "Host Payment History",
     "Logout"
   ];
 
@@ -160,6 +163,10 @@ const UserProfile = () => {
     fetchWishlist();
     fetchHostReviews();
     fetchPayments();
+    fetchMyReviews();
+    fetchPropertyReviews();
+    fetchHostPayments();
+
 
     }, []);
 
@@ -269,6 +276,34 @@ const UserProfile = () => {
 
 };
 
+    const removeWishlist = async (propertyId) => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.delete(
+      `http://127.0.0.1:8000/wishlist/${propertyId}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Property removed from wishlist.");
+
+    fetchWishlist();
+
+  } catch (error) {
+
+    console.log(error);
+    alert("Unable to remove property.");
+
+  }
+
+};
+
     const fetchHostReviews = async () => {
 
   try {
@@ -292,6 +327,31 @@ const UserProfile = () => {
 
 };
 
+    const fetchMyReviews = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/my-reviews/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setMyReviews(response.data);
+
+  } catch (error) {
+
+    console.log(error.response);
+
+  }
+
+};
+
     const fetchPayments = async () => {
 
     try {
@@ -299,7 +359,7 @@ const UserProfile = () => {
         const token = localStorage.getItem("access");
 
         const response = await axios.get(
-            "http://127.0.0.1:8000/payment-history/",
+            "http://127.0.0.1:8000/my-payments/",
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -312,6 +372,31 @@ const UserProfile = () => {
     } catch (error) {
         console.log(error);
     }
+};
+
+    const fetchHostPayments = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/host-payments/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setHostPayments(response.data);
+
+  } catch (error) {
+
+    console.log(error.response);
+
+  }
+
 };
 
     const fetchUsers = async () => {
@@ -480,6 +565,31 @@ const UserProfile = () => {
 
 };
 
+    const fetchPropertyReviews = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      "http://127.0.0.1:8000/host/property-reviews/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setPropertyReviews(response.data);
+
+  } catch (error) {
+
+    console.log(error.response);
+
+  }
+
+};
+
     const handleAddProperty = async (e) => {
   e.preventDefault();
 
@@ -615,6 +725,82 @@ const UserProfile = () => {
 
 };
 
+    const approveBooking = async (id) => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.patch(
+
+      `http://127.0.0.1:8000/host/bookings/${id}/approve/`,
+
+      {},
+
+      {
+
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+
+        },
+
+      }
+
+    );
+
+    alert("Booking Approved");
+
+    fetchHostBookings();
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+    const rejectBooking = async (id) => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.patch(
+
+      `http://127.0.0.1:8000/host/bookings/${id}/reject/`,
+
+      {},
+
+      {
+
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+
+        },
+
+      }
+
+    );
+
+    alert("Booking Rejected");
+
+    fetchHostBookings();
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
   return (
     <div className="profile-container">
 
@@ -678,26 +864,22 @@ const UserProfile = () => {
           )}
 
          
-           {activeTab === "Payment History" && (
+           {activeTab === "Host Payment History" && (
+
 <>
-<h2>Payment History</h2>
+<h2>Host Payment History</h2>
 
-<div className="payment-container">
+<div className="admin-payment-container">
 
-{payments.length === 0 ? (
+{hostPayments.length === 0 ? (
 
 <div className="no-data">
-<h3>No Payment History</h3>
-
-<p>
-You haven't made any payments yet.
-</p>
-
+<h3>No Payments Yet</h3>
 </div>
 
 ) : (
 
-payments.map((payment) => (
+hostPayments.map((payment) => (
 
 <div
 className="admin-payment-card"
@@ -705,6 +887,10 @@ key={payment.id}
 >
 
 <h3>{payment.property_title}</h3>
+
+<p>
+<strong>User:</strong> {payment.user_name}
+</p>
 
 <p>
 <strong>Location:</strong> {payment.property_location}
@@ -719,16 +905,11 @@ key={payment.id}
 </p>
 
 <p>
-<strong>Order ID:</strong> {payment.razorpay_order_id}
+<strong>Payment ID:</strong> {payment.razorpay_payment_id}
 </p>
 
 <p>
-<strong>Payment ID:</strong>{" "}
-{payment.razorpay_payment_id || "-"}
-</p>
-
-<p>
-<strong>Paid On:</strong>{" "}
+<strong>Date:</strong>{" "}
 {payment.paid_at
 ? new Date(payment.paid_at).toLocaleDateString("en-GB")
 : "-"}
@@ -743,8 +924,9 @@ key={payment.id}
 </div>
 
 </>
+
 )}
-            {activeTab === "My Reviews" && (
+            {/* {activeTab === "My Reviews" && (
   <>
     <h2>My Reviews</h2>
 
@@ -756,7 +938,7 @@ key={payment.id}
       </p>
     </div>
   </>
-)}
+)} */}
 
             {activeTab === "Become a Host" && (
                 <>
@@ -1074,6 +1256,24 @@ key={payment.id}
               {new Date(booking.created_at).toLocaleDateString("en-GB")}
             </p>
 
+            <div className="booking-buttons">
+
+  <button
+    className="approve-btn"
+    onClick={() => approveBooking(booking.id)}
+  >
+    Approve
+  </button>
+&nbsp;
+  <button
+    className="reject-btn"
+    onClick={() => rejectBooking(booking.id)}
+  >
+    Reject
+  </button>
+
+</div>
+
           </div>
 
         ))
@@ -1189,6 +1389,65 @@ key={payment.id}
               <strong>Price:</strong> ₹{item.property_price} / Night
             </p>
 
+            <button
+  onClick={() => removeWishlist(item.property)}
+>
+  Remove
+</button>
+
+          </div>
+
+          
+
+        ))
+
+      )}
+
+    </div>
+  </>
+)}
+
+           {activeTab === "My Reviews" && (
+  <>
+    <h2>My Reviews</h2>
+
+    <div className="host-reviews-container">
+
+      {myReviews.length === 0 ? (
+
+        <div className="no-data">
+          <h3>No Reviews Yet</h3>
+          <p>No reviews have been received for your properties.</p>
+        </div>
+
+      ) : (
+
+        myReviews.map((review) => (
+
+          <div
+            className="host-review-card"
+            key={review.id}
+          >
+
+            <h3>{review.property_title}</h3>
+
+            <p>
+              <strong>Reviewed By:</strong> {review.user_name}
+            </p>
+
+            <p>
+              <strong>Rating:</strong> ⭐ {review.rating}/5
+            </p>
+
+            <p>
+              <strong>Comment:</strong> {review.comment}
+            </p>
+
+            <p>
+              <strong>Reviewed On:</strong>{" "}
+              {new Date(review.created_at).toLocaleDateString("en-GB")}
+            </p>
+
           </div>
 
         ))
@@ -1199,13 +1458,13 @@ key={payment.id}
   </>
 )}
 
-           {activeTab === "Show Reviews" && (
+             {activeTab === "Property Reviews" && (
   <>
     <h2>Property Reviews</h2>
 
     <div className="host-reviews-container">
 
-      {hostReviews.length === 0 ? (
+      {propertyReviews.length === 0 ? (
 
         <div className="no-data">
           <h3>No Reviews Yet</h3>
@@ -1214,7 +1473,7 @@ key={payment.id}
 
       ) : (
 
-        hostReviews.map((review) => (
+        propertyReviews.map((review) => (
 
           <div
             className="host-review-card"
@@ -1535,6 +1794,75 @@ Reject
 )
 }
 
+    {activeTab === "My Payments" && (
+
+<>
+<h2>My Payments</h2>
+
+<div className="payment-container">
+
+{payments.length === 0 ? (
+
+<div className="no-data">
+
+<h3>No Payments Yet</h3>
+
+<p>You haven't made any payments yet.</p>
+
+</div>
+
+) : (
+
+payments.map((payment) => (
+
+<div
+className="admin-payment-card"
+key={payment.id}
+>
+
+<h3>{payment.property_title}</h3>
+
+<p>
+<strong>Location:</strong> {payment.property_location}
+</p>
+
+<p>
+<strong>Amount:</strong> ₹{payment.amount}
+</p>
+
+<p>
+<strong>Status:</strong> {payment.payment_status}
+</p>
+
+<p>
+<strong>Order ID:</strong> {payment.razorpay_order_id}
+</p>
+
+<p>
+<strong>Payment ID:</strong> {payment.razorpay_payment_id || "-"}
+</p>
+
+<p>
+<strong>Paid On:</strong>{" "}
+{
+payment.paid_at
+? new Date(payment.paid_at).toLocaleDateString("en-GB")
+: "-"
+}
+</p>
+
+</div>
+
+))
+
+)}
+
+</div>
+
+</>
+
+)}
+
             {
 activeTab === "Show All Bookings" && (
 
@@ -1608,7 +1936,8 @@ activeTab === "All Payment History" && (
 <>
 <h2>All Payment History</h2>
 
-<div className="payment-container">
+<div className="admin-payment-container">
+{/* <div className=".admin-payment-card"> */}
 
 {
 allPayments.length === 0 ?
@@ -1670,6 +1999,7 @@ payment.paid_at
 }
 
 </div>
+{/* </div> */}
 
 </>
 

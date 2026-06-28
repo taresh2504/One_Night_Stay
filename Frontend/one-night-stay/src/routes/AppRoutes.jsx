@@ -29,10 +29,11 @@ const AppRoutes = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/properties" element={<Properties />} />
         <Route path="/propertydetails" element={<Propertydetails />} />
-        <Route path="/booking" element={<Booking />} />
+        {/* <Route path="/booking" element={<Booking />} /> */}
         <Route path="/payment" element={<Payment />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/property/:id" element={<Propertydetails />} />
+        <Route path="/booking/:id" element={<Booking />} />
       </Route>
 
       {/* Pages without Navbar + Footer */}

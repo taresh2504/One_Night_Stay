@@ -8,8 +8,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta
+from datetime import date
 from django.db.models import Q
-
+import razorpay
+from django.conf import settings
+from decimal import Decimal
 
 class BecomeHostView(APIView):
 
@@ -789,7 +792,7 @@ class MyPaymentsView(APIView):
 
         payments = Payment.objects.filter(
             user=request.user
-        )
+        ).order_by("-created_at")
 
         serializer = PaymentSerializer(
             payments,
@@ -917,6 +920,7 @@ class AllPaymentHistoryView(APIView):
 
         return Response(serializer.data)  
 
+
 class ShowAllReviewsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -932,7 +936,42 @@ class ShowAllReviewsView(APIView):
 
         serializer = ReviewSerializer(reviews, many=True)
 
-        return Response(serializer.data)  
+        return Response(serializer.data) 
+
+class HostPropertyReviewsView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        reviews = Review.objects.filter(
+            property__owner=request.user
+        ).order_by("-created_at")
+
+        serializer = ReviewSerializer(
+            reviews,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+class MyReviewsView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        reviews = Review.objects.filter(
+            user=request.user
+        ).order_by("-created_at")
+
+        serializer = ReviewSerializer(
+            reviews,
+            many=True
+        )
+
+        return Response(serializer.data)         
+    
 
 class ApproveSubscriptionView(generics.UpdateAPIView):
 
@@ -1007,4 +1046,183 @@ class PendingSubscriptionListView(generics.ListAPIView):
 
         return UserSubscription.objects.filter(
             approval_status="pending"
-        )                                                      
+        )  
+
+class CreateOrderView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        property_id = request.data.get("property")
+
+        check_in = request.data.get("check_in")
+
+        check_out = request.data.get("check_out")
+
+        guests_count = request.data.get("guests_count")
+        print(request.data)
+        print(property_id)
+
+        property_obj = Property.objects.get(id=property_id)
+
+        nights = (
+            date.fromisoformat(check_out)
+            -
+            date.fromisoformat(check_in)
+        ).days
+
+        check_in = date.fromisoformat(request.data.get("check_in"))
+
+        check_out = date.fromisoformat(request.data.get("check_out"))
+
+        guests_count = request.data.get("guests_count")
+
+        total_amount = property_obj.price * nights
+
+        booking = Booking.objects.create(
+
+            user=request.user,
+
+            property=property_obj,
+
+            check_in=check_in,
+
+            check_out=check_out,
+
+            guests_count=guests_count,
+
+            booking_status="pending"
+
+        )
+
+        client = razorpay.Client(
+
+            auth=(
+
+                settings.RAZORPAY_KEY_ID,
+
+                settings.RAZORPAY_KEY_SECRET
+
+            )
+
+        )
+
+        razorpay_order = client.order.create({
+
+            "amount": int(total_amount * 100),
+
+            "currency": "INR",
+
+            "payment_capture": 1
+
+        })
+
+        payment = Payment.objects.create(
+
+            user=request.user,
+
+            booking=booking,
+
+            razorpay_order_id=razorpay_order["id"],
+
+            amount=total_amount
+
+        )
+
+        return Response({
+
+            "order_id": razorpay_order["id"],
+
+            "amount": int(total_amount * 100),
+            # "amount": int(total_amount * 1),
+
+            "currency": "INR",
+
+            "booking_id": booking.id,
+
+            "payment_id": payment.id,
+
+            "key": settings.RAZORPAY_KEY_ID
+
+        })   
+     
+class VerifyPaymentView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        razorpay_order_id = request.data.get("razorpay_order_id")
+
+        razorpay_payment_id = request.data.get("razorpay_payment_id")
+
+        razorpay_signature = request.data.get("razorpay_signature")
+
+        try:
+
+            client = razorpay.Client(
+                auth=(
+                    settings.RAZORPAY_KEY_ID,
+                    settings.RAZORPAY_KEY_SECRET
+                )
+            )
+
+            client.utility.verify_payment_signature({
+
+                "razorpay_order_id": razorpay_order_id,
+
+                "razorpay_payment_id": razorpay_payment_id,
+
+                "razorpay_signature": razorpay_signature
+
+            })
+
+            payment = Payment.objects.get(
+                razorpay_order_id=razorpay_order_id
+            )
+
+            payment.razorpay_payment_id = razorpay_payment_id
+
+            payment.razorpay_signature = razorpay_signature
+
+            payment.payment_status = "success"
+
+            payment.paid_at = timezone.now()
+
+            payment.save()
+
+            return Response({
+
+                "message": "Payment verified successfully."
+
+            })
+
+        except Exception as e:
+
+            return Response({
+
+                "error": str(e)
+
+            }, status=400)
+
+
+class HostPaymentsView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        payments = Payment.objects.filter(
+            booking__property__owner=request.user
+        ).order_by("-created_at")
+
+        serializer = PaymentSerializer(
+            payments,
+            many=True
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )

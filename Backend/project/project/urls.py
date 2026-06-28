@@ -67,6 +67,11 @@ urlpatterns = [
     name="reject-subscription"),
     path("pending-subscriptions/",PendingSubscriptionListView.as_view(),
     name="pending-subscriptions"),
+    path("payment/create-order/",CreateOrderView.as_view(),name="create-order"),
+    path("payment/verify/",VerifyPaymentView.as_view(),name="verify-payment"),
+    path("host/property-reviews/",HostPropertyReviewsView.as_view(),name="host-property-reviews"),
+    path("my-reviews/",MyReviewsView.as_view(),name="my-reviews"),
+    path("host-payments/",HostPaymentsView.as_view(),name="host-payments"),
 ]
 
 

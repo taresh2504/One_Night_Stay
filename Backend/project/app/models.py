@@ -449,16 +449,23 @@ class Payment(models.Model):
         if errors:
             raise ValidationError(errors)   
 
+    from django.utils import timezone
+
     def save(self, *args, **kwargs):
 
         if self.booking:
             self.amount = self.booking.total_price
 
-        self.full_clean()
-        super().save(*args, **kwargs)
+        if (
+            self.payment_status == "success"
+            and
+            self.paid_at is None
+        ):
+            self.paid_at = timezone.now()
 
-    def __str__(self):
-        return self.razorpay_order_id                     
+        self.full_clean()
+
+        super().save(*args, **kwargs)                   
 
 
 class Wishlist(models.Model):

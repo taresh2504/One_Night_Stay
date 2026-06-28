@@ -286,10 +286,13 @@ body{
   margin-bottom: 10px;
 }
 
-.wishlistcontainer{
+.wishlist-container{
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
 }
 
 .propertyprice{
@@ -1186,6 +1189,52 @@ body{
     padding: 40px 20px;
 }
 
+.admin-payment-container{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:20px;
+
+justify-content:flex-start;
+
+align-items:flex-start;
+
+padding:20px;
+
+}
+
+.admin-payment-card{
+
+width:320px;
+
+background:white;
+
+border-radius:12px;
+
+padding:20px;
+
+box-shadow:0 2px 10px rgba(0,0,0,.12);
+
+transition:.3s;
+
+}
+
+.admin-payment-card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.admin-payment-card{
+
+flex:1 1 320px;
+
+max-width:350px;
+
+}
+
 .payment-card{
     width: 650px;
     background: #fff;
@@ -1701,6 +1750,7 @@ body{
     width: 320px;
     background: #fff;
     border-radius: 12px;
+    margin: 0;
     padding: 15px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
@@ -2121,6 +2171,53 @@ white-space:nowrap;
     font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
+}
+
+.home-hotels{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:25px;
+    padding:20px;
+}
+
+.why-us{
+    padding:50px 30px;
+    text-align:center;
+    background:#f8f9fa;
+}
+
+.why-us h2{
+    margin-bottom:35px;
+    font-size:32px;
+}
+
+.why-container{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:25px;
+}
+
+.why-card{
+    width:250px;
+    background:#fff;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    transition:.3s;
+}
+
+.why-card:hover{
+    transform:translateY(-6px);
+}
+
+.why-card h3{
+    margin:15px 0;
+}
+
+.why-card p{
+    color:#666;
 }
 
 /* Responsive */

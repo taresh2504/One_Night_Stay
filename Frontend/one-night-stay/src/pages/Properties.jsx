@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../App.css";
 import logo from "../assets/One_Night_Stay_Logo.jpg";
 import { IoWifi } from "react-icons/io5";
@@ -10,46 +10,60 @@ import { PiCarBatteryFill } from "react-icons/pi";
 
 const Properties = () => {
 
-  const [properties, setProperties] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const [properties, setProperties] = useState([]);
+  const [search, setSearch] = useState(
+    searchParams.get("search") || ""
+  );
+  const [sort, setSort] = useState("");
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") || "");
+  }, [searchParams]);
 
   const fetchProperties = async () => {
 
     try {
 
-        const response = await axios.get(
-            "http://127.0.0.1:8000/properties/search/",
-            {
-                params: {
-                    search: search,
-                    ordering: sort,
-                },
-            }
-        );
+      const response = await axios.get(
+        "http://127.0.0.1:8000/properties/search/",
+        {
+          params: {
+            search: search,
+            ordering: sort,
+          },
+        }
+      );
 
-        setProperties(response.data);
+      setProperties(response.data);
 
     } catch (error) {
 
-        console.log(error);
+      console.log(error);
 
     }
 
-};
+  };
 
   useEffect(() => {
 
     fetchProperties();
 
-}, [search, sort]);
+  }, [search, sort]);
 
   return (
     <>
       <div className="search-and-sortholder">
 
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            fetchProperties();
+          }}
+        >
+
           <input
             type="search"
             placeholder="Search Hotel, Resort, Bungalow..."
@@ -60,24 +74,40 @@ const Properties = () => {
           <button type="submit">
             Search
           </button>
+
         </form>
 
         <br />
 
         <form>
-          <select defaultValue="" value={sort}
-        onChange={(e) => setSort(e.target.value)}>
-            <option value="" disabled>
+
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
+
+            <option value="">
               Sort here
             </option>
 
-            <option value="-price">Price High to Low</option>
-            <option value="price">Price Low to High</option>
-            <option value="title">Name A to Z</option>
-            <option value="-title">Name Z to A</option>
-            {/* <option>Hotels</option>
-            <option>Resorts</option> */}
+            <option value="-price">
+              Price High to Low
+            </option>
+
+            <option value="price">
+              Price Low to High
+            </option>
+
+            <option value="title">
+              Name A to Z
+            </option>
+
+            <option value="-title">
+              Name Z to A
+            </option>
+
           </select>
+
         </form>
 
       </div>
@@ -86,18 +116,19 @@ const Properties = () => {
 
       {properties.map((property) => (
 
-        <div className="properties-card" key={property.id}>
+        <div
+          className="properties-card"
+          key={property.id}
+        >
 
           <div className="photo-section">
-
-            {/* Main Image */}
 
             <div className="main-photo">
 
               <img
                 src={
                   property.images?.length > 0
-                    ? `https://res.cloudinary.com/dnjvp8b90/${property.images[0].image}`
+                    ? property.images[0].image
                     : logo
                 }
                 alt={property.title}
@@ -105,15 +136,13 @@ const Properties = () => {
 
             </div>
 
-            {/* Side Images */}
-
             <div className="sub-photo">
 
               {property.images?.slice(1, 4).map((img) => (
 
                 <img
                   key={img.id}
-                  src={`https://res.cloudinary.com/dnjvp8b90/${img.image}`}
+                  src={img.image}
                   alt={img.image_type}
                 />
 
@@ -133,10 +162,21 @@ const Properties = () => {
 
             <div className="facility">
 
-              <p><IoWifi /> Free Wi-Fi</p>
-              <p><HiOutlineTv /> T.V Available</p>
-              <p><CgSmartHomeRefrigerator /> Fridge</p>
-              <p><PiCarBatteryFill /> Power Backup</p>
+              <p>
+                <IoWifi /> Free Wi-Fi
+              </p>
+
+              <p>
+                <HiOutlineTv /> T.V Available
+              </p>
+
+              <p>
+                <CgSmartHomeRefrigerator /> Fridge
+              </p>
+
+              <p>
+                <PiCarBatteryFill /> Power Backup
+              </p>
 
             </div>
 
@@ -144,15 +184,25 @@ const Properties = () => {
 
             <div className="detail-end">
 
-              <h2>₹{property.price} / Night</h2>
+              <h2>
+                ₹{property.price} / Night
+              </h2>
 
               <div className="detail-buttons">
 
-                <button onClick={() => navigate(`/property/${property.id}`)}>
+                <button
+                  onClick={() =>
+                    navigate(`/property/${property.id}`)
+                  }
+                >
                   View Details
                 </button>
 
-                <button>
+                <button
+                  onClick={() =>
+                    navigate(`/booking/${property.id}`)
+                  }
+                >
                   Book Now
                 </button>
 
@@ -168,6 +218,7 @@ const Properties = () => {
 
     </>
   );
+
 };
 
 export default Properties;

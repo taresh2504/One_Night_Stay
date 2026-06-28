@@ -160,7 +160,9 @@ class PropertyImageSerializer(serializers.ModelSerializer):
         ]
 
     def get_image(self, obj):
-        return str(obj.image)
+        if obj.image:
+            return obj.image.url
+        return None
 
     
     def validate_image(self, value):
@@ -662,17 +664,20 @@ class PaymentSerializer(
         fields="__all__"
 
         fields = [
-            'id',
-            'user',
-            'booking',
-            'razorpay_order_id',
-            'razorpay_payment_id',
-            'razorpay_signature',
-            'amount',
-            'payment_status',
-            'paid_at',
-            'created_at'
-        ]
+        'id',
+        'user',
+        'user_name',
+        'booking',
+        'property_title',
+        'property_location',
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'razorpay_signature',
+        'amount',
+        'payment_status',
+        'paid_at',
+        'created_at'
+    ]
 
         read_only_fields = [
             'id',

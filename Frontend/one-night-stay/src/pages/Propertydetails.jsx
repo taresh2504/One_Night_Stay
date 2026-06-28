@@ -1,8 +1,8 @@
-import '../App.css'
-import logo from '../assets/One_Night_Stay_Logo.jpg'
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import "../App.css";
+import logo from "../assets/One_Night_Stay_Logo.jpg";
 
 const Propertydetails = () => {
 
@@ -11,6 +11,41 @@ const Propertydetails = () => {
   const [property, setProperty] = useState(null);
 
   const [selectedImage, setSelectedImage] = useState("");
+
+  const [reviews, setReviews] = useState([]);
+
+const [reviewData, setReviewData] = useState({
+  property: id,
+  rating: "",
+  comment: "",
+});
+
+  const navigate = useNavigate();
+
+  const [bookingData, setBookingData] = useState({
+  check_in: "",
+  check_out: "",
+  guests_count: 1,
+});
+
+  const handleBookingChange = (e) => {
+  setBookingData({
+    ...bookingData,
+    [e.target.name]: e.target.value,
+  });
+};
+
+  const handleReviewChange = (e) => {
+
+  setReviewData({
+
+    ...reviewData,
+
+    [e.target.name]: e.target.value,
+
+  });
+
+};
 
   const fetchProperty = async () => {
 
@@ -45,9 +80,36 @@ const Propertydetails = () => {
 
 };
 
+    const fetchReviews = async () => {
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    const response = await axios.get(
+      `http://127.0.0.1:8000/property/${id}/reviews/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setReviews(response.data);
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+
   useEffect(() => {
 
     fetchProperty();
+    fetchReviews();
 
 }, []);
 
@@ -91,27 +153,92 @@ const Propertydetails = () => {
 
 };
 
+      
+    const submitReview = async (e) => {
+
+  e.preventDefault();
+
+  try {
+
+    const token = localStorage.getItem("access");
+
+    await axios.post(
+
+      "http://127.0.0.1:8000/review/",
+
+      reviewData,
+
+      {
+
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+
+        },
+
+      }
+
+    );
+
+    alert("Review Submitted Successfully");
+
+    setReviewData({
+
+      property: id,
+
+      rating: "",
+
+      comment: "",
+
+    });
+
+    fetchReviews();
+
+  } catch (error) {
+
+    console.log(error);
+
+    if (error.response?.data) {
+
+      alert(JSON.stringify(error.response.data));
+
+    } else {
+
+      alert("Unable to submit review.");
+
+    }
+
+  }
+
+};
+
   return (
     <>
       <div className="details-container">
 
   <div className="image-gallery">
-    <img src={`https://res.cloudinary.com/dnjvp8b90/${property.images?.[0]?.image}`}
-  alt={property.title} className="main-image" />
+    {/* <img src={`https://res.cloudinary.com/dnjvp8b90/${property.images?.[0]?.image}`}
+  alt={property.title} className="main-image" /> */}
+  <img
+  src={property.images?.[0]?.image || logo}
+  alt={property.title}
+  className="main-image"
+/>
 
     <div className="gallery-row">
 
-      {property.images?.slice(1, 5).map((img) => (
+  {property.images?.slice(1, 5).map((img) => (
 
-<img
-    key={img.id}
-    src={`https://res.cloudinary.com/dnjvp8b90/${img.image}`}
-    alt=""
-/>
+    <img
+      key={img.id}
+      src={img.image}
+      alt={img.image_type}
+      onClick={() => setSelectedImage(img.image)}
+    />
 
-))}
-      
-    </div>
+  ))}
+
+</div>
   </div>
 
   <div className="property-info">
@@ -148,34 +275,51 @@ const Propertydetails = () => {
 
   <div className="action-buttons">
     <button onClick={addToWishlist}>Add to Wishlist</button>
-    <button>Book Now</button>
+    <button onClick={() => navigate(`/booking/${property.id}`)}>Book Now</button>
   </div>
 
   {/* Customer Reviews */}
 
-<div className="property-reviews">
+{
 
-  <h2>Customer Reviews</h2>
+reviews.length === 0 ?
 
-  <div className="review-card">
+<p>No Reviews Yet</p>
 
-    <h3>Rahul Sharma</h3>
+:
 
-    <p>
-      <strong>Rating:</strong> ⭐⭐⭐⭐⭐
-    </p>
+reviews.map((review)=>(
 
-    <p>
-      Amazing stay with excellent service and beautiful rooms.
-    </p>
+<div
+className="review-card"
+key={review.id}
+>
 
-    <p>
-      <strong>Reviewed On:</strong> 25 Jun 2026
-    </p>
+<h3>{review.user_name}</h3>
 
-  </div>
+<p>
+
+<strong>Rating:</strong>
+
+{"⭐".repeat(review.rating)}
+
+</p>
+
+<p>{review.comment}</p>
+
+<p>
+
+<strong>Date:</strong>
+
+{new Date(review.created_at).toLocaleDateString()}
+
+</p>
 
 </div>
+
+))
+
+}
 
 {/* Write a Review */}
 
@@ -183,11 +327,13 @@ const Propertydetails = () => {
 
   <h2>Write a Review</h2>
 
-  <form>
+  <form onSubmit={submitReview}>
 
     <label>Rating</label>
 
-    <select>
+    <select name="rating"
+value={reviewData.rating}
+onChange={handleReviewChange}>
       <option value="">Select Rating</option>
       <option value="1">⭐ 1</option>
       <option value="2">⭐⭐ 2</option>
@@ -200,7 +346,10 @@ const Propertydetails = () => {
 
     <textarea
       rows="5"
-      placeholder="Write your review..."
+name="comment"
+value={reviewData.comment}
+onChange={handleReviewChange}
+placeholder="Write your review..."
     ></textarea>
 
     <button type="submit">

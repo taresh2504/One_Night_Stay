@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
+RAZORPAY_KEY_ID = "rzp_test_pr99iascS1WRtU"
+RAZORPAY_KEY_SECRET = "UTDIzPGwICnAssu3Q3lk7zUi"
+
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME':'dnjvp8b90',
