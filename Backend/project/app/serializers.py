@@ -7,11 +7,7 @@ from django.utils import timezone
 
 
 class UserSerializer(serializers.ModelSerializer):
-
-    cpassword = serializers.CharField(
-        write_only=True
-    )
-
+    cpassword = serializers.CharField(write_only=True)
     class Meta:
         model = User
 
@@ -43,70 +39,50 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_name(self, value):     
 
         if len(value.strip()) < 4:
-            raise serializers.ValidationError(
-                "Minimum 4 characters required."
-            )
+            raise serializers.ValidationError("Minimum 4 characters required.")
 
         if not re.match(r'^[A-Za-z ]+$', value):
-            raise serializers.ValidationError(
-                "Only alphabets allowed."
-            )
+            raise serializers.ValidationError("Only alphabets allowed.")
 
         return value
 
     def validate_email(self, value):
 
         if not value.lower().endswith("@gmail.com"):
-            raise serializers.ValidationError(
-                "Only Gmail allowed."
-            )
+            raise serializers.ValidationError("Only Gmail allowed.")
 
         return value
 
     def validate_phone(self, value):
 
         if not re.match(r'^[6-9]\d{9}$', value):
-            raise serializers.ValidationError(
-                "Invalid mobile number please enter number in digits."
-            )
+            raise serializers.ValidationError("Invalid mobile number please enter number in digits.")
 
         return value
 
     def validate_password(self, value):
 
         if not value:
-            raise serializers.ValidationError(
-                "Password cannot be empty."
-            )
+            raise serializers.ValidationError("Password cannot be empty.")
 
         if len(value) < 8 or len(value) > 15:
-            raise serializers.ValidationError(
-                "Password must be between 8 and 15 characters."
-            )
+            raise serializers.ValidationError("Password must be between 8 and 15 characters.")
 
         
         if not re.search(r'[a-z]', value):
-            raise serializers.ValidationError(
-                "Password must contain at least one lowercase letter."
-            )
+            raise serializers.ValidationError("Password must contain at least one lowercase letter.")
 
         
         if not re.search(r'[A-Z]', value):
-            raise serializers.ValidationError(
-                "Password must contain at least one uppercase letter."
-            )
+            raise serializers.ValidationError("Password must contain at least one uppercase letter.")
 
         
         if not re.search(r'[0-9]', value):
-            raise serializers.ValidationError(
-                "Password must contain at least one numeric value."
-            )
+            raise serializers.ValidationError("Password must contain at least one numeric value.")
 
         
         if not re.search(r'[*/+\-!@#$%&^]', value):
-            raise serializers.ValidationError(
-                "Password must contain at least one special character."
-            )
+            raise serializers.ValidationError("Password must contain at least one special character.")
 
         return value
 
@@ -123,13 +99,9 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         validated_data.pop('cpassword')
-
         password = validated_data.pop('password')
-
         user = User(**validated_data)
-
         user.set_password(password)
-
         user.save()
 
         return user
@@ -140,7 +112,6 @@ class LoginSerializer(serializers.Serializer):
 
 
 class PropertyImageSerializer(serializers.ModelSerializer):
-
     image = serializers.SerializerMethodField()
 
     class Meta:
@@ -168,9 +139,7 @@ class PropertyImageSerializer(serializers.ModelSerializer):
     def validate_image(self, value):
 
         if not value:
-            raise serializers.ValidationError(
-                "Image is required."
-            )
+            raise serializers.ValidationError("Image is required.")
 
         
         allowed_extensions = [
@@ -186,34 +155,20 @@ class PropertyImageSerializer(serializers.ModelSerializer):
             file_name.endswith(ext)
             for ext in allowed_extensions
         ):
-            raise serializers.ValidationError(
-                "Only JPG, JPEG, PNG, WEBP files allowed."
-            )
+            raise serializers.ValidationError("Only JPG, JPEG, PNG, WEBP files allowed.")
 
         
         max_size = 2 * 1024 * 1024
 
         if value.size > max_size:
-            raise serializers.ValidationError(
-                "Image size must not exceed 2 MB."
-            )
-        
-
+            raise serializers.ValidationError("Image size must not exceed 2 MB.")
+       
         return value     
        
  
 class PropertySerializer(serializers.ModelSerializer):
-
-    host_name = serializers.CharField(
-        source="owner.name",
-        read_only=True
-    )
-
-
-    images = PropertyImageSerializer(
-    many=True,
-    read_only=True
-    )
+    host_name = serializers.CharField(source="owner.name",read_only=True)
+    images = PropertyImageSerializer(many=True,read_only=True)
 
     class Meta:
         model = Property
@@ -248,9 +203,7 @@ class PropertySerializer(serializers.ModelSerializer):
     def validate_title(self, value):
 
         if len(value.strip()) < 5:
-            raise serializers.ValidationError(
-                "Title must be at least 5 characters."
-            )
+            raise serializers.ValidationError("Title must be at least 5 characters.")
 
         return value
 
@@ -258,9 +211,7 @@ class PropertySerializer(serializers.ModelSerializer):
     def validate_location(self, value):
 
         if len(value.strip()) < 3:
-            raise serializers.ValidationError(
-                "Location is too short."
-            )
+            raise serializers.ValidationError("Location is too short.")
 
         return value
     
@@ -268,9 +219,7 @@ class PropertySerializer(serializers.ModelSerializer):
     def validate_description(self, value):
 
         if len(value.strip()) < 20:
-            raise serializers.ValidationError(
-                "Description must be at least 20 characters."
-            )
+            raise serializers.ValidationError("Description must be at least 20 characters.")
 
         return value
 
@@ -304,33 +253,13 @@ class PropertySerializer(serializers.ModelSerializer):
     
 
 class BookingSerializer(serializers.ModelSerializer):
-    property_title = serializers.CharField(
-        source='property.title',
-        read_only=True
-    )
-
-    property_location = serializers.CharField(
-        source='property.location',
-        read_only=True
-    )
-
-    property_type = serializers.CharField(
-        source='property.property_type',
-        read_only=True
-    )
-
-    user_name = serializers.CharField(
-        source="user.name",
-        read_only=True
-    )
-
-    user_email = serializers.EmailField(
-        source="user.email",
-        read_only=True
-    )
+    property_title = serializers.CharField(source='property.title',read_only=True)
+    property_location = serializers.CharField(source='property.location',read_only=True)
+    property_type = serializers.CharField(source='property.property_type',read_only=True)
+    user_name = serializers.CharField(source="user.name",read_only=True)
+    user_email = serializers.EmailField(source="user.email",read_only=True)
 
     class Meta:
-
         model = Booking
         fields="__all__"
 
@@ -362,9 +291,7 @@ class BookingSerializer(serializers.ModelSerializer):
     def validate_check_in(self, value):
 
         if value < date.today():
-            raise serializers.ValidationError(
-                "Check-in date cannot be in the past."
-            )
+            raise serializers.ValidationError("Check-in date cannot be in the past.")
 
         return value
 
@@ -374,7 +301,6 @@ class BookingSerializer(serializers.ModelSerializer):
 
         request = self.context.get('request')
         user = request.user if request else None
-
         property_obj = data.get('property')
         guests_count = data.get('guests_count')
         check_in = data.get('check_in')
@@ -413,44 +339,18 @@ class BookingSerializer(serializers.ModelSerializer):
             )
 
         if errors:
-            raise serializers.ValidationError(
-                errors
-            )
+            raise serializers.ValidationError(errors)
 
         return data
     
 
 class ReviewSerializer(serializers.ModelSerializer):
-    property_title = serializers.CharField(
-        source='property.title',
-        read_only=True
-    )
-
-    user_name = serializers.CharField(
-        source="user.name",
-        read_only=True
-    )
-
-    property_location = serializers.CharField(
-        source='property.location',
-        read_only=True
-    )
-
-    user_name = serializers.CharField(
-        source="user.name",
-        read_only=True
-    )
-
-    property_title = serializers.CharField(
-        source="property.title",
-        read_only=True
-    )
-
-    property_location = serializers.CharField(
-        source="property.location",
-        read_only=True
-    )
-
+    property_title = serializers.CharField(source='property.title',read_only=True)
+    user_name = serializers.CharField(source="user.name",read_only=True)
+    property_location = serializers.CharField(source='property.location',read_only=True)
+    user_name = serializers.CharField(source="user.name",read_only=True)
+    property_title = serializers.CharField(source="property.title",read_only=True)
+    property_location = serializers.CharField(source="property.location",read_only=True)
 
     class Meta:
         model = Review
@@ -477,17 +377,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate_comment(self, value):
 
         if len(value.strip()) < 5:
-            raise serializers.ValidationError(
-                "Feedback must contain at least 5 characters."
-            )
+            raise serializers.ValidationError("Feedback must contain at least 5 characters.")
 
         return value
     
 
     
-class SubscriptionPlanSerializer(
-    serializers.ModelSerializer
-):
+class SubscriptionPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubscriptionPlan
@@ -512,40 +408,23 @@ class SubscriptionPlanSerializer(
     def validate_name(self, value):
 
         if len(value.strip()) < 3:
-            raise serializers.ValidationError(
-                "Plan name is too short."
-            )
+            raise serializers.ValidationError("Plan name is too short.")
 
         return value
 
     def validate_description(self, value):
 
         if len(value.strip()) < 10:
-            raise serializers.ValidationError(
-                "Description must contain at least 10 characters."
-            )
+            raise serializers.ValidationError("Description must contain at least 10 characters.")
 
         return value
     
 
 
-class UserSubscriptionSerializer(
-    serializers.ModelSerializer
-):
-    user_name = serializers.CharField(
-        source="user.name",
-        read_only=True
-    )
-
-    user_email = serializers.CharField(
-        source="user.email",
-        read_only=True
-    )
-
-    plan_name = serializers.CharField(
-        source="plan.name",
-        read_only=True
-    )
+class UserSubscriptionSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source="user.name",read_only=True)
+    user_email = serializers.CharField(source="user.email",read_only=True)
+    plan_name = serializers.CharField(source="plan.name",read_only=True)
 
     class Meta:
 
@@ -575,9 +454,7 @@ class UserSubscriptionSerializer(
     def validate_end_date(self, value):
 
         if value <= timezone.now():
-            raise serializers.ValidationError(
-                "End date must be in the future."
-            )
+            raise serializers.ValidationError("End date must be in the future.")
 
         return value
         
@@ -640,23 +517,10 @@ class UserSubscriptionSerializer(
 
 #         return data  
 
-class PaymentSerializer(
-    serializers.ModelSerializer
-):
-    user_name = serializers.CharField(
-        source="booking.user.name",
-        read_only=True
-    )
-
-    property_title = serializers.CharField(
-        source="booking.property.title",
-        read_only=True
-    )
-
-    property_location = serializers.CharField(
-        source="booking.property.location",
-        read_only=True
-    )
+class PaymentSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source="booking.user.name",read_only=True)
+    property_title = serializers.CharField(source="booking.property.title",read_only=True)
+    property_location = serializers.CharField(source="booking.property.location",read_only=True)
 
     class Meta:
 
@@ -687,27 +551,10 @@ class PaymentSerializer(
         ]
 
 class WishlistSerializer(serializers.ModelSerializer):
-    property_title = serializers.CharField(
-        source='property.title',
-        read_only=True
-    )
-
-    property_type = serializers.CharField(
-    source="property.property_type",
-    read_only=True
-)
-
-    property_location = serializers.CharField(
-        source='property.location',
-        read_only=True
-    )
-
-    property_price = serializers.DecimalField(
-        source='property.price',
-        max_digits=10,
-        decimal_places=2,
-        read_only=True
-    )
+    property_title = serializers.CharField(source='property.title',read_only=True)
+    property_type = serializers.CharField(source="property.property_type",read_only=True)
+    property_location = serializers.CharField(source='property.location',read_only=True)
+    property_price = serializers.DecimalField(source='property.price',max_digits=10,decimal_places=2,read_only=True)
 
     class Meta:
 

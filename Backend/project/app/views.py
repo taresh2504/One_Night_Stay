@@ -15,13 +15,10 @@ from django.conf import settings
 from decimal import Decimal
 
 class BecomeHostView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         user = request.user
-
         if user.host_status == 'pending':
             return Response(
                 {
@@ -72,17 +69,9 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class LoginView(APIView):
-
     def post(self, request):
-
-        serializer = LoginSerializer(
-            data=request.data
-        )
-
-        serializer.is_valid(
-            raise_exception=True
-        )
-
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
 
@@ -102,11 +91,7 @@ class LoginView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        user = authenticate(
-            request,
-            email=email,
-            password=password
-        )
+        user = authenticate(request,email=email,password=password)
 
         if not user:
 
@@ -118,9 +103,7 @@ class LoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        refresh = RefreshToken.for_user(
-            user
-        )
+        refresh = RefreshToken.for_user(user)
 
         return Response(
     {
@@ -169,24 +152,37 @@ class PropertyListCreateView(generics.ListCreateAPIView):
 
 
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
-
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
-    permission_classes = [IsAuthenticated]       
+    permission_classes = [IsAuthenticated] 
+
+    # permission_classes = [AllowAny]      
+
+# class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+#     queryset = Property.objects.all()
+#     serializer_class = PropertySerializer
+#     permission_classes = [AllowAny]
+
+#     def get(self, request, *args, **kwargs):
+#         print("PROPERTY DETAIL VIEW HIT")
+#         return super().get(request, *args, **kwargs)
+
+
+# class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Property.objects.all()
+#     serializer_class = PropertySerializer
+#     permission_classes = (AllowAny,)
     
 
 class PropertyImageListCreateView(generics.ListCreateAPIView):
-
     queryset = PropertyImage.objects.all()
     serializer_class = PropertyImageSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-
         user = self.request.user
-
         property_obj = serializer.validated_data['property']
-
         
         if user.role != 'host':
             raise PermissionDenied(
@@ -216,22 +212,15 @@ class SubscriptionPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserSubscriptionCreateView(generics.CreateAPIView):
-
     serializer_class = UserSubscriptionSerializer
-
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-
         user = self.request.user
-
         user.host_status = "pending"
         user.save()
 
-        serializer.save(
-            user=user,
-            end_date=timezone.now() + timedelta(days=30)
-        )
+        serializer.save(user=user,end_date=timezone.now() + timedelta(days=30))
         
 class UserSubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserSubscription.objects.all()
@@ -239,58 +228,32 @@ class UserSubscriptionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class WishlistView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        wishlist = Wishlist.objects.filter(user=request.user).select_related('property')
+        serializer = WishlistSerializer(wishlist,many=True)
 
-        wishlist = Wishlist.objects.filter(
-            user=request.user
-        ).select_related('property')
-
-        serializer = WishlistSerializer(
-            wishlist,
-            many=True
-        )
-
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def post(self, request):
 
-        serializer = WishlistSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = WishlistSerializer(data=request.data,context={'request': request})
 
         if serializer.is_valid():
 
-            serializer.save(
-                user=request.user
-            )
+            serializer.save(user=request.user)
 
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )    
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
 
 class WishlistDeleteView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, property_id):
 
-        wishlist_item = Wishlist.objects.filter(
-            user=request.user,
-            property_id=property_id
-        ).first()
+        wishlist_item = Wishlist.objects.filter(user=request.user,property_id=property_id).first()
 
         if not wishlist_item:
             return Response(
@@ -312,60 +275,28 @@ class WishlistDeleteView(APIView):
         )
 
 class BookingView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        bookings = Booking.objects.filter(
-            user=request.user
-        ).select_related(
-            'property'
-        )
-
-        serializer = BookingSerializer(
-            bookings,
-            many=True
-        )
-
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+        bookings = Booking.objects.filter(user=request.user).select_related('property')
+        serializer = BookingSerializer(bookings,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def post(self, request):
-
-        serializer = BookingSerializer(
-            data=request.data,
-            context={'request': request}
-        )
+        serializer = BookingSerializer(data=request.data,context={'request': request})
 
         if serializer.is_valid():
+            serializer.save(user=request.user)
 
-            serializer.save(
-                user=request.user
-            )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
-
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class CancelBookingView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, booking_id):
-
-        booking = Booking.objects.filter(
-            id=booking_id,
-            user=request.user
-        ).first()
+        booking = Booking.objects.filter(id=booking_id,user=request.user).first()
 
         if not booking:
             return Response(
@@ -389,35 +320,19 @@ class CancelBookingView(APIView):
 
 
 class HostBookingListView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
-        bookings = Booking.objects.filter(
-            property__owner=request.user
-        ).select_related(
-            'user',
-            'property'
-        )
-
-        serializer = BookingSerializer(
-            bookings,
-            many=True
-        )
-
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+        bookings = Booking.objects.filter(property__owner=request.user).select_related('user','property')
+        serializer = BookingSerializer(bookings,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 class ApproveBookingView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, booking_id):
-
         booking = Booking.objects.filter(
             id=booking_id,
             property__owner=request.user
@@ -446,15 +361,10 @@ class ApproveBookingView(APIView):
 
 
 class RejectBookingView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, booking_id):
-
-        booking = Booking.objects.filter(
-            id=booking_id,
-            property__owner=request.user
-        ).first()
+        booking = Booking.objects.filter(id=booking_id,property__owner=request.user).first()
 
         if not booking:
 
@@ -479,27 +389,17 @@ class RejectBookingView(APIView):
 
 
 class PaymentListCreateView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        payments = Payment.objects.filter(
-            user=request.user
-        )
-
-        serializer = PaymentSerializer(
-            payments,
-            many=True
-        )
-
+        payments = Payment.objects.filter(user=request.user)
+        serializer = PaymentSerializer(payments,many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
         )
 
     def post(self, request):
-
         serializer = PaymentSerializer(
             data=request.data
         )
@@ -521,18 +421,12 @@ class PaymentListCreateView(APIView):
         )    
     
 class PaymentDetailView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-
-        payment = Payment.objects.filter(
-            id=pk,
-            user=request.user
-        ).first()
+        payment = Payment.objects.filter(id=pk,user=request.user).first()
 
         if not payment:
-
             return Response(
                 {
                     "error":
@@ -541,9 +435,7 @@ class PaymentDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = PaymentSerializer(
-            payment
-        )
+        serializer = PaymentSerializer(payment)
 
         return Response(
             serializer.data,
@@ -551,17 +443,11 @@ class PaymentDetailView(APIView):
         )
 
 class ReviewListCreateView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
         reviews = Review.objects.all()
-
-        serializer = ReviewSerializer(
-            reviews,
-            many=True
-        )
+        serializer = ReviewSerializer(reviews,many=True)
 
         return Response(
             serializer.data,
@@ -592,17 +478,12 @@ class ReviewListCreateView(APIView):
         )        
     
 class ReviewDetailView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-
-        review = Review.objects.filter(
-            id=pk
-        ).first()
+        review = Review.objects.filter(id=pk).first()
 
         if not review:
-
             return Response(
                 {
                     "error":
@@ -611,9 +492,7 @@ class ReviewDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = ReviewSerializer(
-            review
-        )
+        serializer = ReviewSerializer(review)
 
         return Response(
             serializer.data,
@@ -624,9 +503,7 @@ class ReviewDetailView(APIView):
 class PropertySearchView(APIView):
 
     def get(self, request):
-
         properties = Property.objects.all()
-
         search = request.query_params.get('search')
         min_price = request.query_params.get('min_price')
         max_price = request.query_params.get('max_price')
@@ -647,32 +524,21 @@ class PropertySearchView(APIView):
 
         if min_price:
 
-            properties = properties.filter(
-                price__gte=min_price
-            )
+            properties = properties.filter(price__gte=min_price)
 
         if max_price:
 
-            properties = properties.filter(
-                price__lte=max_price
-            )
+            properties = properties.filter(price__lte=max_price)
 
         if property_type:
 
-            properties = properties.filter(
-                property_type__iexact=property_type
-            )
+            properties = properties.filter(property_type__iexact=property_type)
 
         if featured:
 
-            properties = properties.filter(
-                is_featured=featured.lower() == 'true'
-            )
+            properties = properties.filter(is_featured=featured.lower() == 'true')
 
-        serializer = PropertySerializer(
-            properties,
-            many=True
-        )
+        serializer = PropertySerializer(properties, many=True)
 
         return Response(
             serializer.data,
@@ -681,19 +547,14 @@ class PropertySearchView(APIView):
     
 
 class LogoutView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
         try:
-
             refresh_token = request.data["refresh"]
-
             token = RefreshToken(refresh_token)
-
             token.blacklist()
-
             return Response(
                 {
                     "message":
@@ -714,14 +575,10 @@ class LogoutView(APIView):
 
 
 class MyProfileView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        serializer = UserSerializer(
-            request.user
-        )
+        serializer = UserSerializer(request.user)
 
         return Response(
             serializer.data,
@@ -732,15 +589,8 @@ class MyPropertiesView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
 
-        properties = Property.objects.filter(
-            owner=request.user
-        )
-
-        serializer = PropertySerializer(
-            properties,
-            many=True
-        )
-
+        properties = Property.objects.filter(owner=request.user)
+        serializer = PropertySerializer(properties,many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
@@ -765,19 +615,11 @@ class MyPropertiesView(APIView):
 
 
 class MyBookingsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        bookings = Booking.objects.filter(
-            user=request.user
-        )
-
-        serializer = BookingSerializer(
-            bookings,
-            many=True
-        )
+        bookings = Booking.objects.filter(user=request.user)
+        serializer = BookingSerializer(bookings,many=True)
 
         return Response(
             serializer.data,
@@ -785,34 +627,22 @@ class MyBookingsView(APIView):
         )
 
 class MyPaymentsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        payments = Payment.objects.filter(
-            user=request.user
-        ).order_by("-created_at")
-
-        serializer = PaymentSerializer(
-            payments,
-            many=True
-        )
-
+        payments = Payment.objects.filter(user=request.user).order_by("-created_at")
+        serializer = PaymentSerializer(payments,many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
         )
 
 class PropertyReviewsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, property_id):
 
-        property_obj = Property.objects.filter(
-            id=property_id
-        ).first()
+        property_obj = Property.objects.filter(id=property_id).first()
 
         if not property_obj:
 
@@ -824,15 +654,8 @@ class PropertyReviewsView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        reviews = Review.objects.filter(
-            property=property_obj
-        )
-
-        serializer = ReviewSerializer(
-            reviews,
-            many=True
-        )
-
+        reviews = Review.objects.filter(property=property_obj)
+        serializer = ReviewSerializer(reviews,many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK
@@ -847,26 +670,18 @@ class ShowHostsView(APIView):
             return Response({"message": "Unauthorized"}, status=403)
 
         hosts = User.objects.filter(role="host")
-
         serializer = UserSerializer(hosts, many=True)
-
         return Response(serializer.data)  
 
 class PendingHostsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
         if request.user.role != "admin":
             return Response({"message": "Unauthorized"}, status=403)
 
-        pending_hosts = User.objects.filter(
-            role="host",
-            host_status="pending"
-        )
-
+        pending_hosts = User.objects.filter(role="host",host_status="pending")
         serializer = UserSerializer(pending_hosts, many=True)
-
         return Response(serializer.data)   
 
 class ShowAllPropertiesView(APIView):
@@ -881,9 +696,7 @@ class ShowAllPropertiesView(APIView):
             )
 
         properties = Property.objects.all().order_by("-created_at")
-
         serializer = PropertySerializer(properties, many=True)
-
         return Response(serializer.data)
 
 class ShowAllBookingsView(APIView):
@@ -898,9 +711,7 @@ class ShowAllBookingsView(APIView):
             )
 
         bookings = Booking.objects.all().order_by("-created_at")
-
         serializer = BookingSerializer(bookings, many=True)
-
         return Response(serializer.data)
 
 class AllPaymentHistoryView(APIView):
@@ -915,9 +726,7 @@ class AllPaymentHistoryView(APIView):
             )
 
         payments = Payment.objects.all().order_by("-paid_at")
-
         serializer = PaymentSerializer(payments, many=True)
-
         return Response(serializer.data)  
 
 
@@ -933,43 +742,25 @@ class ShowAllReviewsView(APIView):
             )
 
         reviews = Review.objects.all().order_by("-created_at")
-
         serializer = ReviewSerializer(reviews, many=True)
-
         return Response(serializer.data) 
 
 class HostPropertyReviewsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
-        reviews = Review.objects.filter(
-            property__owner=request.user
-        ).order_by("-created_at")
-
-        serializer = ReviewSerializer(
-            reviews,
-            many=True
-        )
-
+        reviews = Review.objects.filter(property__owner=request.user).order_by("-created_at")
+        serializer = ReviewSerializer(reviews,many=True)
         return Response(serializer.data)
 
 class MyReviewsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
-        reviews = Review.objects.filter(
-            user=request.user
-        ).order_by("-created_at")
-
-        serializer = ReviewSerializer(
-            reviews,
-            many=True
-        )
-
+        reviews = Review.objects.filter(user=request.user).order_by("-created_at")
+        serializer = ReviewSerializer(reviews,many=True)
         return Response(serializer.data)         
     
 
@@ -982,15 +773,11 @@ class ApproveSubscriptionView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
 
         if request.user.role != "admin":
-            raise PermissionDenied(
-                "Only admin can approve subscriptions."
-            )
+            raise PermissionDenied("Only admin can approve subscriptions.")
 
         subscription = self.get_object()
-
         subscription.approval_status = "approved"
         subscription.save()
-
         user = subscription.user
         user.host_status = "approved"
         user.role = "host"
@@ -1017,10 +804,8 @@ class RejectSubscriptionView(generics.UpdateAPIView):
             )
 
         subscription = self.get_object()
-
         subscription.approval_status = "rejected"
         subscription.save()
-
         user = subscription.user
         user.host_status = "rejected"
         user.save()
@@ -1040,123 +825,77 @@ class PendingSubscriptionListView(generics.ListAPIView):
     def get_queryset(self):
 
         if self.request.user.role != "admin":
-            raise PermissionDenied(
-                "Only admin can view subscription requests."
-            )
+            raise PermissionDenied("Only admin can view subscription requests.")
 
-        return UserSubscription.objects.filter(
-            approval_status="pending"
-        )  
+        return UserSubscription.objects.filter(approval_status="pending")  
 
 class CreateOrderView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
         property_id = request.data.get("property")
-
         check_in = request.data.get("check_in")
-
         check_out = request.data.get("check_out")
-
         guests_count = request.data.get("guests_count")
         print(request.data)
         print(property_id)
-
         property_obj = Property.objects.get(id=property_id)
-
         nights = (
             date.fromisoformat(check_out)
             -
             date.fromisoformat(check_in)
         ).days
-
         check_in = date.fromisoformat(request.data.get("check_in"))
-
         check_out = date.fromisoformat(request.data.get("check_out"))
-
         guests_count = request.data.get("guests_count")
-
         total_amount = property_obj.price * nights
-
         booking = Booking.objects.create(
-
             user=request.user,
-
             property=property_obj,
-
             check_in=check_in,
-
             check_out=check_out,
-
             guests_count=guests_count,
-
             booking_status="pending"
-
         )
 
         client = razorpay.Client(
-
             auth=(
-
                 settings.RAZORPAY_KEY_ID,
-
                 settings.RAZORPAY_KEY_SECRET
-
             )
-
         )
 
         razorpay_order = client.order.create({
-
             "amount": int(total_amount * 100),
-
             "currency": "INR",
-
             "payment_capture": 1
-
         })
 
         payment = Payment.objects.create(
-
             user=request.user,
-
             booking=booking,
-
             razorpay_order_id=razorpay_order["id"],
-
             amount=total_amount
-
         )
 
         return Response({
-
             "order_id": razorpay_order["id"],
-
             "amount": int(total_amount * 100),
             # "amount": int(total_amount * 1),
-
             "currency": "INR",
-
             "booking_id": booking.id,
-
             "payment_id": payment.id,
-
             "key": settings.RAZORPAY_KEY_ID
-
         })   
      
 class VerifyPaymentView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
         razorpay_order_id = request.data.get("razorpay_order_id")
-
         razorpay_payment_id = request.data.get("razorpay_payment_id")
-
         razorpay_signature = request.data.get("razorpay_signature")
 
         try:
@@ -1169,33 +908,20 @@ class VerifyPaymentView(APIView):
             )
 
             client.utility.verify_payment_signature({
-
                 "razorpay_order_id": razorpay_order_id,
-
                 "razorpay_payment_id": razorpay_payment_id,
-
                 "razorpay_signature": razorpay_signature
-
             })
 
-            payment = Payment.objects.get(
-                razorpay_order_id=razorpay_order_id
-            )
-
+            payment = Payment.objects.get(razorpay_order_id=razorpay_order_id)
             payment.razorpay_payment_id = razorpay_payment_id
-
             payment.razorpay_signature = razorpay_signature
-
             payment.payment_status = "success"
-
             payment.paid_at = timezone.now()
-
             payment.save()
 
             return Response({
-
                 "message": "Payment verified successfully."
-
             })
 
         except Exception as e:
@@ -1208,20 +934,11 @@ class VerifyPaymentView(APIView):
 
 
 class HostPaymentsView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        payments = Payment.objects.filter(
-            booking__property__owner=request.user
-        ).order_by("-created_at")
-
-        serializer = PaymentSerializer(
-            payments,
-            many=True
-        )
-
+        payments = Payment.objects.filter(booking__property__owner=request.user).order_by("-created_at")
+        serializer = PaymentSerializer(payments,many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK

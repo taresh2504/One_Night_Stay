@@ -8,20 +8,16 @@ const Propertycard = ({ property }) => {
   const navigate = useNavigate();
 
   const imageUrl =
-  property.images?.length > 0
-    ? property.images[0].image.startsWith("http")
-      ? property.images[0].image
-      : `http://127.0.0.1:8000/media/${property.images[0].image}`
-    : logo;
-
-  console.log(property.images);
-  console.log(property.images[0]);
-  console.log(imageUrl);    
+    property.images?.length > 0
+      ? property.images[0].image.startsWith("http")
+        ? property.images[0].image
+        : `http://127.0.0.1:8000/media/${property.images[0].image}`
+      : logo;
 
   return (
 
     <div
-      className="cardholder"
+      className="cardholder h-100 shadow-sm"
       onClick={() => navigate(`/property/${property.id}`)}
       style={{ cursor: "pointer" }}
     >
@@ -36,7 +32,7 @@ const Propertycard = ({ property }) => {
 
       </div>
 
-      <div className="cardcontent">
+      <div className="cardcontent d-flex flex-column">
 
         <div className="propertyname">
           {property.title}
@@ -46,21 +42,12 @@ const Propertycard = ({ property }) => {
           {property.location}
         </div>
 
-        <div className="wishlistcontainer">
+        <div className="wishlistcontainer mt-auto">
 
-          <p className="propertyprice">
+          <p className="propertyprice mb-0">
             ₹{property.price}
             <span> / Night</span>
           </p>
-
-          {/* <button
-            className="wishlistbutton"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            Wishlist
-          </button> */}
 
         </div>
 

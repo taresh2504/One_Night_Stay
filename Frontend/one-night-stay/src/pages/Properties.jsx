@@ -55,96 +55,220 @@ const Properties = () => {
 
   return (
     <>
-      <div className="search-and-sortholder">
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            fetchProperties();
-          }}
-        >
+      <div className="container-fluid py-4">
 
-          <input
-            type="search"
-            placeholder="Search Hotel, Resort, Bungalow..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="row justify-content-center">
 
-          <button type="submit">
-            Search
-          </button>
+          <div className="col-lg-11">
 
-        </form>
+            <div className="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-3 mb-4">
 
-        <br />
+              <form
+                className="d-flex w-100"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  fetchProperties();
+                }}
+              >
 
-        <form>
+                <input
+                  type="search"
+                  className="form-control me-2"
+                  placeholder="Search Hotel, Resort, Bungalow..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          >
+                <button
+                  className="btn btn-dark"
+                  type="submit"
+                >
+                  Search
+                </button>
 
-            <option value="">
-              Sort here
-            </option>
+              </form>
 
-            <option value="-price">
-              Price High to Low
-            </option>
+              <select
+                className="form-select"
+                style={{ maxWidth: "250px" }}
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
 
-            <option value="price">
-              Price Low to High
-            </option>
+                <option value="">
+                  Sort Here
+                </option>
 
-            <option value="title">
-              Name A to Z
-            </option>
+                <option value="-price">
+                  Price High to Low
+                </option>
 
-            <option value="-title">
-              Name Z to A
-            </option>
+                <option value="price">
+                  Price Low to High
+                </option>
 
-          </select>
+                <option value="title">
+                  Name A to Z
+                </option>
 
-        </form>
+                <option value="-title">
+                  Name Z to A
+                </option>
 
-      </div>
-
-      <br />
-
-      {properties.map((property) => (
-
-        <div
-          className="properties-card"
-          key={property.id}
-        >
-
-          <div className="photo-section">
-
-            <div className="main-photo">
-
-              <img
-                src={
-                  property.images?.length > 0
-                    ? property.images[0].image
-                    : logo
-                }
-                alt={property.title}
-              />
+              </select>
 
             </div>
 
-            <div className="sub-photo">
+            <div className="row g-4">
 
-              {property.images?.slice(1, 4).map((img) => (
+              {properties.map((property) => (
+                                <div
+                  className="col-12"
+                  key={property.id}
+                >
 
-                <img
-                  key={img.id}
-                  src={img.image}
-                  alt={img.image_type}
-                />
+                  <div className="card shadow-sm property-card-bs">
+
+                    <div className="row g-0">
+
+                      {/* Images */}
+
+                      <div className="col-lg-5">
+
+                        <div className="p-3">
+
+                          <div className="mb-2">
+
+                            <img
+                              src={
+                                property.images?.length > 0
+                                  ? property.images[0].image
+                                  : logo
+                              }
+                              alt={property.title}
+                              className="property-main-image"
+                              style={{
+                                height: "300px",
+                                objectFit: "cover",
+                              }}
+                            />
+
+                          </div>
+
+                          <div className="row g-2">
+
+                            {property.images?.slice(1, 4).map((img) => (
+
+                              <div
+                                className="col-4"
+                                key={img.id}
+                              >
+
+                                <img
+                                  src={img.image}
+                                  alt={img.image_type}
+                                  className="property-small-image"
+                                  style={{
+                                    height: "90px",
+                                    objectFit: "cover",
+                                  }}
+                                />
+
+                              </div>
+
+                            ))}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      {/* Details */}
+
+                      <div className="col-lg-7">
+
+                        <div className="card-body d-flex flex-column h-100">
+
+                          <h2 className="property-title">
+                            {property.title}
+                          </h2>
+
+                          <h5 className="property-location">
+                            📍 {property.location}
+                          </h5>
+
+                          <div className="row mb-4 property-facility">
+
+                            <div className="col-md-6">
+
+                              <p>
+                                <IoWifi /> Free Wi-Fi
+                              </p>
+
+                              <p>
+                                <HiOutlineTv /> TV Available
+                              </p>
+
+                            </div>
+
+                            <div className="col-md-6">
+
+                              <p>
+                                <CgSmartHomeRefrigerator /> Fridge
+                              </p>
+
+                              <p>
+                                <PiCarBatteryFill /> Power Backup
+                              </p>
+
+                            </div>
+
+                          </div>
+
+                          <div className="mt-auto d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+
+                            <h3 className="property-price">
+                              ₹{property.price}
+                              <span className="fs-5 text-secondary">
+                                {" "}
+                                / Night
+                              </span>
+                            </h3>
+
+                            <div className="property-btns d-flex gap-2">
+                              <button
+                                className="btn btn-dark"
+                                onClick={() =>
+                                  navigate(`/property/${property.id}`)
+                                }
+                              >
+                                View Details
+                              </button>
+
+                              <button
+                                className="btn btn-success"
+                                onClick={() =>
+                                  navigate(`/booking/${property.id}`)
+                                }
+                              >
+                                Book Now
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
 
               ))}
 
@@ -152,73 +276,12 @@ const Properties = () => {
 
           </div>
 
-          <div className="detail">
-
-            <h1>{property.title}</h1>
-
-            <h3>📍 {property.location}</h3>
-
-            <br />
-
-            <div className="facility">
-
-              <p>
-                <IoWifi /> Free Wi-Fi
-              </p>
-
-              <p>
-                <HiOutlineTv /> T.V Available
-              </p>
-
-              <p>
-                <CgSmartHomeRefrigerator /> Fridge
-              </p>
-
-              <p>
-                <PiCarBatteryFill /> Power Backup
-              </p>
-
-            </div>
-
-            <br />
-
-            <div className="detail-end">
-
-              <h2>
-                ₹{property.price} / Night
-              </h2>
-
-              <div className="detail-buttons">
-
-                <button
-                  onClick={() =>
-                    navigate(`/property/${property.id}`)
-                  }
-                >
-                  View Details
-                </button>
-
-                <button
-                  onClick={() =>
-                    navigate(`/booking/${property.id}`)
-                  }
-                >
-                  Book Now
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
         </div>
 
-      ))}
+      </div>
 
     </>
   );
-
 };
 
 export default Properties;

@@ -6,6 +6,7 @@ import "../App.css";
 const Booking = () => {
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [property, setProperty] = useState(null);
 
@@ -15,8 +16,6 @@ const Booking = () => {
     check_out: "",
     guests_count: 1,
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -66,211 +65,248 @@ const Booking = () => {
 
   const handleBooking = async () => {
 
-  try {
+    try {
 
-    const token = localStorage.getItem("access");
+      const token = localStorage.getItem("access");
 
-    // Create Order
-    const orderResponse = await axios.post(
+      const orderResponse = await axios.post(
 
-      "http://127.0.0.1:8000/payment/create-order/",
+        "http://127.0.0.1:8000/payment/create-order/",
 
-      bookingData,
+        bookingData,
 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
 
-    );
+      );
 
-    const order = orderResponse.data;
+      const order = orderResponse.data;
 
-    const options = {
+      const options = {
 
-      key: order.key,
+        key: order.key,
+        amount: order.amount,
+        currency: order.currency,
+        name: "One Night Stay",
+        description: "Hotel Booking Payment",
+        order_id: order.order_id,
 
-      amount: order.amount,
+        handler: async function (response) {
 
-      currency: order.currency,
+          try {
 
-      name: "One Night Stay",
+            await axios.post(
 
-      description: "Hotel Booking Payment",
+              "http://127.0.0.1:8000/payment/verify/",
 
-      order_id: order.order_id,
-
-      handler: async function (response) {
-
-        try {
-
-          await axios.post(
-
-            "http://127.0.0.1:8000/payment/verify/",
-
-            {
-
-              razorpay_order_id: response.razorpay_order_id,
-
-              razorpay_payment_id: response.razorpay_payment_id,
-
-              razorpay_signature: response.razorpay_signature,
-
-            },
-
-            {
-
-              headers: {
-
-                Authorization: `Bearer ${token}`,
-
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
               },
 
-            }
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
 
-          );
+            );
 
-          alert("Payment Successful 🎉");
+            alert("Payment Successful 🎉");
 
-          navigate("/profile");
+            navigate("/profile");
 
-        }
+          }
 
-        catch (err) {
+          catch (err) {
 
-          console.log(err);
+            console.log(err);
 
-          alert("Payment verification failed.");
+            alert("Payment verification failed.");
 
-        }
+          }
 
-      },
+        },
 
-      prefill: {
+        prefill: {
+          name: "",
+          email: "",
+        },
 
-        name: "",
+        theme: {
+          color: "#0d6efd",
+        },
 
-        email: "",
+      };
 
-      },
+      const razorpay = new window.Razorpay(options);
 
-      theme: {
-
-        color: "#0d6efd",
-
-      },
-
-    };
-
-    const razorpay = new window.Razorpay(options);
-
-    razorpay.open();
-
-  }
-
-  catch (error) {
-
-    console.log(error);
-
-    if (error.response?.data) {
-
-      alert(JSON.stringify(error.response.data));
+      razorpay.open();
 
     }
 
-    else {
+    catch (error) {
 
-      alert("Something went wrong.");
+      console.log(error);
+
+      if (error.response?.data) {
+
+        alert(JSON.stringify(error.response.data));
+
+      }
+
+      else {
+
+        alert("Something went wrong.");
+
+      }
 
     }
 
-  }
-
-};
+  };
 
   const nights =
-  bookingData.check_in && bookingData.check_out
-    ? Math.max(
-        0,
-        (new Date(bookingData.check_out) -
-          new Date(bookingData.check_in)) /
-          (1000 * 60 * 60 * 24)
-      )
-    : 0;
+    bookingData.check_in && bookingData.check_out
+      ? Math.max(
+          0,
+          (new Date(bookingData.check_out) -
+            new Date(bookingData.check_in)) /
+            (1000 * 60 * 60 * 24)
+        )
+      : 0;
 
-const totalPrice = nights * (property?.price || 0);
+  const totalPrice = nights * (property?.price || 0);
 
   if (!property) {
 
-    return <h2>Loading...</h2>;
+    return <h2 className="text-center mt-5">Loading...</h2>;
 
   }
+    return (
 
-  return (
+    <div className="container py-5">
 
-    <div className="booking-container">
+      <div className="row justify-content-center">
 
-      <div className="booking-card">
+        <div className="col-lg-8">
 
-        <h1>Booking Page</h1>
+          <div className="card shadow border-0 booking-card">
 
-        <h2>{property.title}</h2>
+            <div className="card-body p-4">
 
-        <p>📍 {property.location}</p>
+              <h2 className="text-center mb-4">
+                Booking Details
+              </h2>
 
-        <h3>₹{property.price} / Night</h3>
+              <div className="mb-4">
 
-        <form>
+                <h3>{property.title}</h3>
 
-          <label>Check In Date</label>
+                <p className="text-muted mb-2">
+                  📍 {property.location}
+                </p>
 
-          <input
-            type="date"
-            name="check_in"
-            value={bookingData.check_in}
-            onChange={handleBookingChange}
-          />
+                <h4 className="text-primary">
+                  ₹{property.price} / Night
+                </h4>
 
-          <label>Check Out Date</label>
+              </div>
 
-          <input
-            type="date"
-            name="check_out"
-            value={bookingData.check_out}
-            onChange={handleBookingChange}
-          />
+              <form>
 
-          <label>Guests</label>
+                <div className="row">
 
-          <input
-            type="number"
-            min="1"
-            name="guests_count"max={property.max_guests}
-            value={bookingData.guests_count}
-            onChange={handleBookingChange}
-          />
-          <p>Maximum Guests Allowed: {property.max_guests}</p>
+                  <div className="col-md-6 mb-3">
 
-          <div className="total-price">
+                    <label className="form-label">
+                      Check In Date
+                    </label>
 
-            <h2>Total Price: ₹{totalPrice}</h2>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="check_in"
+                      value={bookingData.check_in}
+                      onChange={handleBookingChange}
+                    />
 
-            <p>
-  {nights} Night{nights !== 1 ? "s" : ""}
-</p>
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+
+                    <label className="form-label">
+                      Check Out Date
+                    </label>
+
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="check_out"
+                      value={bookingData.check_out}
+                      onChange={handleBookingChange}
+                    />
+
+                  </div>
+
+                </div>
+
+                <div className="mb-4">
+
+                  <label className="form-label">
+                    Guests
+                  </label>
+
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="1"
+                    max={property.max_guests}
+                    name="guests_count"
+                    value={bookingData.guests_count}
+                    onChange={handleBookingChange}
+                  />
+
+                  <small className="text-muted">
+                    Maximum Guests Allowed : {property.max_guests}
+                  </small>
+
+                </div>
+
+                <div className="card bg-light border-0 mb-4">
+
+                  <div className="card-body">
+
+                    <h4>
+                      Total Price : ₹{totalPrice}
+                    </h4>
+
+                    <p className="mb-0">
+                      {nights} Night{nights !== 1 ? "s" : ""}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-primary w-100 py-2"
+                  onClick={handleBooking}
+                >
+                  Confirm Booking
+                </button>
+
+              </form>
+
+            </div>
 
           </div>
 
-          <button
-            type="button"
-            className="confirm-btn"
-            onClick={handleBooking}
-          >
-            Confirm Booking
-          </button>
-
-        </form>
+        </div>
 
       </div>
 
