@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     "corsheaders",
+    "drf_spectacular",
 ]
 
 RAZORPAY_KEY_ID = "rzp_test_pr99iascS1WRtU"
@@ -159,6 +160,13 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "One Night Stay API",
+    "DESCRIPTION": "API documentation for One Night Stay project",
+    "VERSION": "1.0.0",
 }
 
 SIMPLE_JWT = {
