@@ -951,24 +951,38 @@ class CreateAdminView(APIView):
 
         User = get_user_model()
 
-        if User.objects.filter(email="admin@gmail.com").exists():
+        email = "admin@gmail.com"
+
+        user = User.objects.filter(email=email).first()
+
+        if user:
+            user.is_staff = True
+            user.is_superuser = True
+            user.role = "admin"
+            user.host_status = "none"
+            user.set_password("Sy@12345")
+            user.save()
+
             return Response({
-                "message": "Admin already exists"
+                "message": "Existing user updated as admin",
+                "email": email
             })
 
-        user = User.objects.create_superuser(
-            email="taresh430@gmail.com",
-            name="Admin",
-            phone="7400962298",
-            password="Az@12345"
+        user = User.objects.create_user(
+            email="admin@gmail.com",
+            name="Sanjay Yadav",
+            phone="9999999999",
+            password="Sy@12345"
         )
 
+        user.is_staff = True
+        user.is_superuser = True
         user.role = "admin"
         user.host_status = "none"
         user.save()
 
         return Response({
             "message": "Admin created successfully",
-            "email": "taresh430@gmail.com",
-            "password": "Az@12345"
-        })    
+            "email": "admin@gmail.com",
+            "password": "Sy@12345"
+        })
