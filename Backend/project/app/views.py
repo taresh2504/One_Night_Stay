@@ -946,7 +946,7 @@ class HostPaymentsView(APIView):
         )
     
 
-    
+
 class CreateAdminView(APIView):
 
     def get(self, request):
@@ -962,6 +962,7 @@ class CreateAdminView(APIView):
                 user.is_staff = True
                 user.is_superuser = True
                 user.role = "admin"
+                user.host_status = "none"
                 user.set_password("Sy@12345")
                 user.save()
 
@@ -970,16 +971,18 @@ class CreateAdminView(APIView):
                     "email": email
                 })
 
-            user = User.objects.create_user(
+            user = User(
                 email="admin@gmail.com",
                 name="Sanjay Yadav",
                 phone="9999999999",
-                password="Sy@12345"
+                role="admin",
+                host_status="none",
+                is_staff=True,
+                is_superuser=True,
+                is_active=True,
             )
 
-            user.is_staff = True
-            user.is_superuser = True
-            user.role = "admin"
+            user.set_password("Sy@12345")
             user.save()
 
             return Response({
