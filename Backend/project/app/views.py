@@ -13,6 +13,7 @@ from django.db.models import Q
 import razorpay
 from django.conf import settings
 from decimal import Decimal
+from django.contrib.auth import get_user_model
 
 class BecomeHostView(APIView):
     permission_classes = [IsAuthenticated]
@@ -943,3 +944,31 @@ class HostPaymentsView(APIView):
             serializer.data,
             status=status.HTTP_200_OK
         )
+    
+class CreateAdminView(APIView):
+
+    def get(self, request):
+
+        User = get_user_model()
+
+        if User.objects.filter(email="admin@gmail.com").exists():
+            return Response({
+                "message": "Admin already exists"
+            })
+
+        user = User.objects.create_superuser(
+            email="taresh430@gmail.com",
+            name="Admin",
+            phone="7400962298",
+            password="Az@12345"
+        )
+
+        user.role = "admin"
+        user.host_status = "none"
+        user.save()
+
+        return Response({
+            "message": "Admin created successfully",
+            "email": "taresh430@gmail.com",
+            "password": "Az@12345"
+        })    
