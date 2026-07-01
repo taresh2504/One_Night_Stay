@@ -33,7 +33,7 @@ const Home = () => {
     try {
 
       const response = await axios.get(
-        "http://127.0.0.1:8000/properties/"
+        "https://one-night-stay.onrender.com/properties/"
       );
 
       setHotels(

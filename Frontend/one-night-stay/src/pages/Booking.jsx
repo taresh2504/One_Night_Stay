@@ -32,7 +32,7 @@ const Booking = () => {
       try {
         const token = localStorage.getItem("access");
         const response = await axios.get(
-          `http://127.0.0.1:8000/properties/${id}/`,
+          `https://one-night-stay.onrender.com/properties/${id}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ const handleBooking = async () => {
     const token = localStorage.getItem("access");
 
     const orderResponse = await axios.post(
-      "http://127.0.0.1:8000/payment/create-order/",
+      "https://one-night-stay.onrender.com/payment/create-order/",
       bookingData,
       {
         headers: {

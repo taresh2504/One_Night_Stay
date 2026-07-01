@@ -56,7 +56,7 @@ const Propertydetails = () => {
       const token = localStorage.getItem("access");
 
       const response = await axios.get(
-        `http://127.0.0.1:8000/properties/${id}/`,
+        `https://one-night-stay.onrender.com/properties/${id}/`,
         {
           headers: token
             ? {
@@ -83,7 +83,7 @@ const Propertydetails = () => {
     const token = localStorage.getItem("access");
 
     const response = await axios.get(
-      `http://127.0.0.1:8000/properties/${id}/reviews/`,
+      `https://one-night-stay.onrender.com/properties/${id}/reviews/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

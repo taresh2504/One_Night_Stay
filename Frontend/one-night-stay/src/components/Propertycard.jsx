@@ -11,7 +11,7 @@ const Propertycard = ({ property }) => {
     property.images?.length > 0
       ? property.images[0].image.startsWith("http")
         ? property.images[0].image
-        : `http://127.0.0.1:8000/media/${property.images[0].image}`
+        : `https://one-night-stay.onrender.com/media/${property.images[0].image}`
       : logo;
 
   return (

@@ -124,7 +124,7 @@ const UserProfile = () => {
   const fetchMyProperties = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/my-properties/",
+        "https://one-night-stay.onrender.com/my-properties/",
         authHeaders()
       );
 
@@ -137,7 +137,7 @@ const UserProfile = () => {
   const fetchMyBookings = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/my-bookings/",
+        "https://one-night-stay.onrender.com/my-bookings/",
         authHeaders()
       );
 
@@ -150,7 +150,7 @@ const UserProfile = () => {
   const fetchHostBookings = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/host/bookings/",
+        "https://one-night-stay.onrender.com/host/bookings/",
         authHeaders()
       );
 
@@ -163,7 +163,7 @@ const UserProfile = () => {
   const fetchWishlist = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/wishlist/",
+        "https://one-night-stay.onrender.com/wishlist/",
         authHeaders()
       );
 
@@ -176,7 +176,7 @@ const UserProfile = () => {
   const removeWishlist = async (propertyId) => {
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/wishlist/${propertyId}/`,
+        `https://one-night-stay.onrender.com/wishlist/${propertyId}/`,
         authHeaders()
       );
 
@@ -191,7 +191,7 @@ const UserProfile = () => {
   const fetchMyReviews = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/my-reviews/",
+        "https://one-night-stay.onrender.com/my-reviews/",
         authHeaders()
       );
 
@@ -204,7 +204,7 @@ const UserProfile = () => {
   const fetchPropertyReviews = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/host/property-reviews/",
+        "https://one-night-stay.onrender.com/host/property-reviews/",
         authHeaders()
       );
 
@@ -217,7 +217,7 @@ const UserProfile = () => {
   const fetchPayments = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/my-payments/",
+        "https://one-night-stay.onrender.com/my-payments/",
         authHeaders()
       );
 
@@ -230,7 +230,7 @@ const UserProfile = () => {
   const fetchHostPayments = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/host-payments/",
+        "https://one-night-stay.onrender.com/host-payments/",
         authHeaders()
       );
 
@@ -242,7 +242,7 @@ const UserProfile = () => {
     const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/users/",
+        "https://one-night-stay.onrender.com/users/",
         authHeaders()
       );
 
@@ -255,7 +255,7 @@ const UserProfile = () => {
   const fetchHosts = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/hosts/",
+        "https://one-night-stay.onrender.com/hosts/",
         authHeaders()
       );
 
@@ -268,7 +268,7 @@ const UserProfile = () => {
   const fetchPendingSubscriptions = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/pending-subscriptions/",
+        "https://one-night-stay.onrender.com/pending-subscriptions/",
         authHeaders()
       );
 
@@ -281,7 +281,7 @@ const UserProfile = () => {
   const fetchAllProperties = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/all-properties/",
+        "https://one-night-stay.onrender.com/all-properties/",
         authHeaders()
       );
 
@@ -294,7 +294,7 @@ const UserProfile = () => {
   const fetchAllBookings = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/all-bookings/",
+        "https://one-night-stay.onrender.com/all-bookings/",
         authHeaders()
       );
 
@@ -307,7 +307,7 @@ const UserProfile = () => {
   const fetchAllPayments = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/all-payments/",
+        "https://one-night-stay.onrender.com/all-payments/",
         authHeaders()
       );
 
@@ -320,7 +320,7 @@ const UserProfile = () => {
   const fetchAllReviews = async () => {
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/all-reviews/",
+        "https://one-night-stay.onrender.com/all-reviews/",
         authHeaders()
       );
 
@@ -346,7 +346,7 @@ const UserProfile = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/properties/",
+        "https://one-night-stay.onrender.com/properties/",
         propertyData,
         authHeaders()
       );
@@ -385,7 +385,7 @@ const UserProfile = () => {
       formData.append("image_type", imageData.image_type);
 
       await axios.post(
-        "http://127.0.0.1:8000/property-images/",
+        "https://one-night-stay.onrender.com/property-images/",
         formData,
         {
           headers: {
@@ -411,7 +411,7 @@ const UserProfile = () => {
   const handleApprove = async (id) => {
     try {
       await axios.put(
-        `http://127.0.0.1:8000/approve-subscription/${id}/`,
+        `https://one-night-stay.onrender.com/approve-subscription/${id}/`,
         {},
         authHeaders()
       );
@@ -427,7 +427,7 @@ const UserProfile = () => {
   const handleReject = async (id) => {
     try {
       await axios.put(
-        `http://127.0.0.1:8000/reject-subscription/${id}/`,
+        `https://one-night-stay.onrender.com/reject-subscription/${id}/`,
         {},
         authHeaders()
       );
@@ -443,7 +443,7 @@ const UserProfile = () => {
   const approveBooking = async (id) => {
     try {
       await axios.patch(
-        `http://127.0.0.1:8000/host/bookings/${id}/approve/`,
+        `https://one-night-stay.onrender.com/host/bookings/${id}/approve/`,
         {},
         authHeaders()
       );
@@ -458,7 +458,7 @@ const UserProfile = () => {
   const rejectBooking = async (id) => {
     try {
       await axios.patch(
-        `http://127.0.0.1:8000/host/bookings/${id}/reject/`,
+        `https://one-night-stay.onrender.com/host/bookings/${id}/reject/`,
         {},
         authHeaders()
       );

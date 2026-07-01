@@ -11,7 +11,7 @@ const SubscriptionPlans = () => {
       const token = localStorage.getItem("access");
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/subscribe/",
+        "https://one-night-stay.onrender.com/subscribe/",
         {
           plan: planId,
         },
