@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import os
+import dj_database_url
 import cloudinary
 from pathlib import Path
 from datetime import timedelta
@@ -22,12 +24,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7n3he)l6_(w%+uiq9=w+)7409@eas6ep0yrv#px!if%!ibcmkj'
+# SECRET_KEY = 'django-insecure-7n3he)l6_(w%+uiq9=w+)7409@eas6ep0yrv#px!if%!ibcmkj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-7n3he)l6_(w%+uiq9=w+)7409@eas6ep0yrv#px!if%!ibcmkj"
+)
+
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
 
 
 # Application definition
@@ -48,20 +62,43 @@ INSTALLED_APPS = [
     "drf_spectacular",
 ]
 
-RAZORPAY_KEY_ID = "rzp_test_pr99iascS1WRtU"
-RAZORPAY_KEY_SECRET = "UTDIzPGwICnAssu3Q3lk7zUi"
+# RAZORPAY_KEY_ID = "rzp_test_pr99iascS1WRtU"
+# RAZORPAY_KEY_SECRET = "UTDIzPGwICnAssu3Q3lk7zUi"
 
+
+RAZORPAY_KEY_ID = os.environ.get(
+    "RAZORPAY_KEY_ID",
+    "rzp_test_pr99iascS1WRtU"
+)
+
+RAZORPAY_KEY_SECRET = os.environ.get(
+    "RAZORPAY_KEY_SECRET",
+    "UTDIzPGwICnAssu3Q3lk7zUi"
+)
+
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME':'dnjvp8b90',
+#     'API_KEY':'868796568785493',
+#     'API_SECRET':'Kjw2gsLiSMFmos_rtPL7KB9lMEE'
+# }
+
+# cloudinary.config(
+#     cloud_name='dnjvp8b90',
+#     api_key='868796568785493',
+#     api_secret='Kjw2gsLiSMFmos_rtPL7KB9lMEE',
+#     secure=True
+# )
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME':'dnjvp8b90',
-    'API_KEY':'868796568785493',
-    'API_SECRET':'Kjw2gsLiSMFmos_rtPL7KB9lMEE'
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", "dnjvp8b90"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", "868796568785493"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", "Kjw2gsLiSMFmos_rtPL7KB9lMEE"),
 }
 
 cloudinary.config(
-    cloud_name='dnjvp8b90',
-    api_key='868796568785493',
-    api_secret='Kjw2gsLiSMFmos_rtPL7KB9lMEE',
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME", "dnjvp8b90"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY", "868796568785493"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET", "Kjw2gsLiSMFmos_rtPL7KB9lMEE"),
     secure=True
 )
 
@@ -70,6 +107,7 @@ AUTH_USER_MODEL = 'app.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
@@ -103,15 +141,22 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'One_Night_Stay',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Tandy@123',
+#         'HOST': 'localhost', 
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'One_Night_Stay',
-        'USER': 'postgres',
-        'PASSWORD': 'Tandy@123',
-        'HOST': 'localhost', 
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default="postgres://postgres:Tandy%40123@localhost:5432/One_Night_Stay",
+        conn_max_age=600,
+    )
 }
 
 
@@ -150,7 +195,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
+
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 REST_FRAMEWORK = {
