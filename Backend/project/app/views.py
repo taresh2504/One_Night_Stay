@@ -945,44 +945,50 @@ class HostPaymentsView(APIView):
             status=status.HTTP_200_OK
         )
     
+
+    
 class CreateAdminView(APIView):
 
     def get(self, request):
 
-        User = get_user_model()
+        try:
+            User = get_user_model()
 
-        email = "admin@gmail.com"
+            email = "admin@gmail.com"
 
-        user = User.objects.filter(email=email).first()
+            user = User.objects.filter(email=email).first()
 
-        if user:
+            if user:
+                user.is_staff = True
+                user.is_superuser = True
+                user.role = "admin"
+                user.set_password("Sy@12345")
+                user.save()
+
+                return Response({
+                    "message": "Existing user updated as admin",
+                    "email": email
+                })
+
+            user = User.objects.create_user(
+                email="admin@gmail.com",
+                name="Sanjay Yadav",
+                phone="9999999999",
+                password="Sy@12345"
+            )
+
             user.is_staff = True
             user.is_superuser = True
             user.role = "admin"
-            user.host_status = "none"
-            user.set_password("Sy@12345")
             user.save()
 
             return Response({
-                "message": "Existing user updated as admin",
-                "email": email
+                "message": "Admin created successfully",
+                "email": "admin@gmail.com",
+                "password": "Sy@12345"
             })
 
-        user = User.objects.create_user(
-            email="admin@gmail.com",
-            name="Sanjay Yadav",
-            phone="9999999999",
-            password="Sy@12345"
-        )
-
-        user.is_staff = True
-        user.is_superuser = True
-        user.role = "admin"
-        user.host_status = "none"
-        user.save()
-
-        return Response({
-            "message": "Admin created successfully",
-            "email": "admin@gmail.com",
-            "password": "Sy@12345"
-        })
+        except Exception as e:
+            return Response({
+                "error": str(e)
+            }, status=500)
