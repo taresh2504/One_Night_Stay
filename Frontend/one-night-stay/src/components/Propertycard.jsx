@@ -9,7 +9,7 @@ const Propertycard = ({ property }) => {
 
   const firstImage = property?.images?.[0]?.image;
 
-  const imageUrl =
+const imageUrl = firstImage || logo;
     firstImage && firstImage.startsWith("http")
       ? firstImage
       : firstImage
