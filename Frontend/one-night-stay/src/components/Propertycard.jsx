@@ -9,12 +9,14 @@ const Propertycard = ({ property }) => {
 
   const firstImage = property?.images?.[0]?.image;
 
-const imageUrl = firstImage || logo;
-    firstImage && firstImage.startsWith("http")
-      ? firstImage
-      : firstImage
-      ? `https://one-night-stay.onrender.com/media/${firstImage}`
-      : logo;
+  const imageUrl = firstImage || logo;
+      firstImage && firstImage.startsWith("http")
+        ? firstImage
+        : firstImage
+        ? `https://one-night-stay.onrender.com/media/${firstImage}`
+        : logo;
+  
+  console.log(property.images);      
 
   return (
 
