@@ -7,11 +7,13 @@ const Propertycard = ({ property }) => {
 
   const navigate = useNavigate();
 
+  const firstImage = property?.images?.[0]?.image;
+
   const imageUrl =
-    property.images?.length > 0
-      ? property.images[0].image.startsWith("http")
-        ? property.images[0].image
-        : `https://one-night-stay.onrender.com/media/${property.images[0].image}`
+    firstImage && firstImage.startsWith("http")
+      ? firstImage
+      : firstImage
+      ? `https://one-night-stay.onrender.com/media/${firstImage}`
       : logo;
 
   return (
