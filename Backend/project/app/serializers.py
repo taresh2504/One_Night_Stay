@@ -111,12 +111,64 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField() 
 
 
+# class PropertyImageSerializer(serializers.ModelSerializer):
+#     image = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = PropertyImage
+
+#         fields = [
+#             'id',
+#             'property',
+#             'image',
+#             'image_type',
+#             'uploaded_at'
+#         ]
+
+#         read_only_fields = [
+#             'id',
+#             'uploaded_at'
+#         ]
+
+#     def get_image(self, obj):
+#         if obj.image:
+#             return obj.image.url
+#         return None
+
+    
+#     def validate_image(self, value):
+
+#         if not value:
+#             raise serializers.ValidationError("Image is required.")
+
+        
+#         allowed_extensions = [
+#             '.jpg',
+#             '.jpeg',
+#             '.png',
+#             '.webp'
+#         ]
+
+#         file_name = value.name.lower()
+
+#         if not any(
+#             file_name.endswith(ext)
+#             for ext in allowed_extensions
+#         ):
+#             raise serializers.ValidationError("Only JPG, JPEG, PNG, WEBP files allowed.")
+
+        
+#         max_size = 2 * 1024 * 1024
+
+#         if value.size > max_size:
+#             raise serializers.ValidationError("Image size must not exceed 2 MB.")
+       
+#         return value     
+
 class PropertyImageSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
 
     class Meta:
         model = PropertyImage
-
         fields = [
             'id',
             'property',
@@ -130,40 +182,38 @@ class PropertyImageSerializer(serializers.ModelSerializer):
             'uploaded_at'
         ]
 
-    def get_image(self, obj):
-        if obj.image:
-            return obj.image.url
-        return None
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
 
-    
+        if instance.image:
+            data['image'] = instance.image.url
+        else:
+            data['image'] = None
+
+        return data
+
     def validate_image(self, value):
 
         if not value:
             raise serializers.ValidationError("Image is required.")
 
-        
-        allowed_extensions = [
-            '.jpg',
-            '.jpeg',
-            '.png',
-            '.webp'
-        ]
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp']
 
         file_name = value.name.lower()
 
-        if not any(
-            file_name.endswith(ext)
-            for ext in allowed_extensions
-        ):
-            raise serializers.ValidationError("Only JPG, JPEG, PNG, WEBP files allowed.")
+        if not any(file_name.endswith(ext) for ext in allowed_extensions):
+            raise serializers.ValidationError(
+                "Only JPG, JPEG, PNG, WEBP files allowed."
+            )
 
-        
         max_size = 2 * 1024 * 1024
 
         if value.size > max_size:
-            raise serializers.ValidationError("Image size must not exceed 2 MB.")
-       
-        return value     
+            raise serializers.ValidationError(
+                "Image size must not exceed 2 MB."
+            )
+
+        return value
        
  
 class PropertySerializer(serializers.ModelSerializer):
