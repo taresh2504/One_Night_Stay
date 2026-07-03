@@ -10,11 +10,16 @@ const Propertycard = ({ property }) => {
   const firstImage = property?.images?.[0]?.image;
 
 const imageUrl =
-  firstImage && typeof firstImage === "string"
+  firstImage && typeof firstImage === "string" && firstImage.trim() !== ""
     ? firstImage.startsWith("http")
       ? firstImage
       : `https://one-night-stay.onrender.com${firstImage.startsWith("/") ? "" : "/"}${firstImage}`
-    : logo;    
+    : logo;
+
+    console.log("property:", property);
+    console.log("images:", property?.images);
+    console.log("firstImage:", property?.images?.[0]?.image);
+    console.log("final imageUrl:", imageUrl);
 
   return (
 
@@ -36,6 +41,7 @@ const imageUrl =
   alt={property?.title || "Property"}
   className="propertyimage"
   onError={(e) => {
+    console.log("Image failed:", imageUrl);
     e.currentTarget.src = logo;
   }}
 />
