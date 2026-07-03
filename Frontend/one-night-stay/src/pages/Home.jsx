@@ -19,142 +19,80 @@ const Home = () => {
   }, []);
 
   const handleSearch = () => {
-
     if (search.trim() === "") {
       navigate("/properties");
     } else {
       navigate(`/properties?search=${search}`);
     }
-
   };
 
   const fetchProperties = async () => {
-
     try {
-
       const response = await axios.get(
         "https://one-night-stay.onrender.com/properties/"
       );
 
       setHotels(
-
         response.data.filter(
           (item) =>
             item.property_type?.toLowerCase() === "hotel"
         )
-
       );
 
       setResorts(
-
         response.data.filter(
           (item) =>
             item.property_type?.toLowerCase() === "resort"
         )
-
       );
-
     }
 
     catch (error) {
-
       console.log(error);
-
     }
-
   };
 
   return (
 
     <>
-
-      <Homesearch
-        search={search}
-        setSearch={setSearch}
-        handleSearch={handleSearch}
-      />
-
-      <br />
-      <br />
+      <Homesearch search={search} setSearch={setSearch} handleSearch={handleSearch}/>
+      <br /><br />
 
       <div className="container-fluid">
-
-        <h1 className="section-title mb-4">
-          Explore Hotels <FaArrowRightLong />
-        </h1>
+        <h1 className="section-title mb-4">Explore Hotels <FaArrowRightLong /></h1>
 
         <div className="row g-4 justify-content-center">
-
           {
-
             hotels.map((hotel) => (
-
-              <div
-                className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
-                key={hotel.id}
-              >
-
+              <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" key={hotel.id}>
                 <Propertycard property={hotel} />
-
               </div>
-
             ))
-
           }
-
         </div>
-
       </div>
-
-      <br />
-      <br />
+      <br /><br />
 
       <div className="container-fluid">
-
-        <h1 className="section-title mb-4">
-          Discover Resorts <FaArrowRightLong />
-        </h1>
-
+        <h1 className="section-title mb-4">Discover Resorts <FaArrowRightLong /></h1>
         <div className="row g-4 justify-content-center">
-
           {
-
             resorts.map((resort) => (
-
-              <div
-                className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12"
-                key={resort.id}
-              >
-
+              <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" key={resort.id}>
                 <Propertycard property={resort} />
-
               </div>
-
             ))
-
           }
-
         </div>
-
       </div>
-
-      <br />
-      <br />
+      <br /><br />
 
       <section className="why-us">
-
         <div className="container">
-
-          <h2 className="text-center mb-5">
-            Why Choose One Night Stay?
-          </h2>
-
+          <h2 className="text-center mb-5">Why Choose One Night Stay?</h2>
           <div className="row g-4">
-
             <div className="col-lg-3 col-md-6 col-sm-6 col-12">
-
               <div className="why-card h-100">
-
                 🏨
 
                 <h3>Verified Properties</h3>
