@@ -249,6 +249,8 @@ class WishlistView(APIView):
 
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
 
+
+
 class WishlistDeleteView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -292,6 +294,7 @@ class BookingView(APIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 class CancelBookingView(APIView):
     permission_classes = [IsAuthenticated]

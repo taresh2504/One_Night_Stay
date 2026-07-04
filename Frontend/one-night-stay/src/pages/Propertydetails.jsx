@@ -114,37 +114,71 @@ const Propertydetails = () => {
     );
   }
 
+  // const addToWishlist = async () => {
+
+  //   try {
+
+  //     const token = localStorage.getItem("access");
+
+  //     await axios.post(
+  //       "http://127.0.0.1:8000/wishlist/",
+  //       {
+  //         property: property.id,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     alert("Property added to Wishlist.");
+
+  //   } catch (error) {
+
+  //     if (error.response?.data?.non_field_errors) {
+  //       alert(error.response.data.non_field_errors[0]);
+  //     } else {
+  //       alert("Unable to add Property.");
+  //     }
+
+  //   }
+
+  // };
+
   const addToWishlist = async () => {
+  try {
+    const token = localStorage.getItem("access");
 
-    try {
-
-      const token = localStorage.getItem("access");
-
-      await axios.post(
-        "http://127.0.0.1:8000/wishlist/",
-        {
-          property: property.id,
+    await axios.post(
+      "https://one-night-stay.onrender.com/wishlist/",
+      {
+        property: property.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      alert("Property added to Wishlist.");
-
-    } catch (error) {
-
-      if (error.response?.data?.non_field_errors) {
-        alert(error.response.data.non_field_errors[0]);
-      } else {
-        alert("Unable to add Property.");
       }
+    );
 
+    alert("Property added to Wishlist.");
+  } catch (error) {
+    console.log(error.response?.data);
+
+    const data = error.response?.data;
+
+    if (data?.property) {
+      alert(data.property);
+    } else if (data?.user) {
+      alert(data.user);
+    } else if (data?.detail) {
+      alert(data.detail);
+    } else {
+      alert("Unable to add Property.");
     }
-
-  };
+  }
+};
 
   const submitReview = async (e) => {
 
