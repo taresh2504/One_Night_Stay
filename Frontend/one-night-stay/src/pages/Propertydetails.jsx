@@ -189,7 +189,7 @@ const Propertydetails = () => {
       const token = localStorage.getItem("access");
 
       await axios.post(
-        "http://127.0.0.1:8000/review/",
+        "https://one-night-stay.onrender.com/review/",
         reviewData,
         {
           headers: {
