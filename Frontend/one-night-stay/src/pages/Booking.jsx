@@ -108,7 +108,7 @@ const handleBooking = async () => {
       handler: async function (response) {
         try {
           await axios.post(
-            "http://127.0.0.1:8000/payment/verify/",
+            "https://one-night-stay.onrender.com/payment/verify/",
             {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,

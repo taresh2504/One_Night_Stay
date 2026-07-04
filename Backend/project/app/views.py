@@ -833,6 +833,7 @@ class PendingSubscriptionListView(generics.ListAPIView):
 
         return UserSubscription.objects.filter(approval_status="pending")  
 
+
 class CreateOrderView(APIView):
     permission_classes = [IsAuthenticated]
 
